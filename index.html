@@ -20,6 +20,23 @@
       0% { transform: translateX(-100%); }
       100% { transform: translateX(200%); }
     }
+    @keyframes sync-breathe {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+    @keyframes sync-wave {
+      0% { transform: translateY(0); }
+      25% { transform: translateY(-2px); }
+      50% { transform: translateY(0); }
+      75% { transform: translateY(2px); }
+      100% { transform: translateY(0); }
+    }
+    .sync-breathing {
+      animation: sync-breathe 1.5s ease-in-out infinite;
+    }
+    .sync-wave {
+      animation: sync-wave 1s ease-in-out infinite;
+    }
   </style>
 </head>
 <body>
@@ -43,7 +60,10 @@
       'mealprep-beverage-needs',
       'mealprep-snack-needs',
       'mealprep-pantry-categories',
-      'mealprep-recipe-images'
+      'mealprep-recipe-images',
+      'mealprep-claude-key',
+      'mealprep-openai-key',
+      'mealprep-ai-model'
     ];
 
     // ============== RECIPE DATABASE - LOADED FROM JSONBIN CLOUD ==============
@@ -389,7 +409,7 @@
                   {/* Sync Status */}
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                     <div className="flex items-center gap-2">
-                      <div className={"w-3 h-3 rounded-full " + (syncStatus === 'connected' ? 'bg-green-500' : syncStatus === 'syncing' ? 'bg-yellow-500 animate-pulse' : 'bg-gray-400')}></div>
+                      <div className={"w-3 h-3 rounded-full transition-all duration-300 " + (syncStatus === 'connected' ? 'bg-green-500' : syncStatus === 'syncing' ? 'bg-yellow-400 sync-breathing' : 'bg-gray-400')}></div>
                       <span className="text-sm font-medium text-gray-700">
                         {syncStatus === 'connected' ? 'Connected' : syncStatus === 'syncing' ? 'Syncing...' : 'Not connected'}
                       </span>
@@ -2776,11 +2796,14 @@
       var currentMonth = today.getMonth();
       var currentYear = today.getFullYear();
 
-      // PIN Lock State - hardcoded PIN for access
+      // PIN Lock State - remembers unlock in localStorage so you only enter PIN once per device
       var DEFAULT_PIN = '20046';
-      var [isUnlocked, setIsUnlocked] = useState(false);
+      var [isUnlocked, setIsUnlocked] = useState(function() {
+        return localStorage.getItem('mealprep-unlocked') === 'true';
+      });
 
       function handleUnlock() {
+        localStorage.setItem('mealprep-unlocked', 'true');
         setIsUnlocked(true);
       }
 
@@ -2826,10 +2849,14 @@
       var [showImport, setShowImport] = useState(false);
       var [showAddRecipe, setShowAddRecipe] = useState(false);
       var [editingRecipe, setEditingRecipe] = useState(null);
-      var [tempApiKey, setTempApiKey] = useState('');
       var [claudeApiKey, setClaudeApiKey] = useLocalStorage('mealprep-claude-key', '');
       var [openaiApiKey, setOpenaiApiKey] = useLocalStorage('mealprep-openai-key', '');
-      var [tempOpenaiKey, setTempOpenaiKey] = useState('');
+      var [tempApiKey, setTempApiKey] = useState(function() { 
+        return localStorage.getItem('mealprep-claude-key') ? JSON.parse(localStorage.getItem('mealprep-claude-key')) : ''; 
+      });
+      var [tempOpenaiKey, setTempOpenaiKey] = useState(function() { 
+        return localStorage.getItem('mealprep-openai-key') ? JSON.parse(localStorage.getItem('mealprep-openai-key')) : ''; 
+      });
       var [selectedModel, setSelectedModel] = useLocalStorage('mealprep-ai-model', 'claude-3-haiku-20240307');
       var [addingRecipeAI, setAddingRecipeAI] = useState(false);
       var [customRecipes, setCustomRecipes] = useLocalStorage('mealprep-custom-recipes', []);
@@ -3089,6 +3116,7 @@
 
       function openSettings() {
         setTempApiKey(claudeApiKey);
+        setTempOpenaiKey(openaiApiKey);
         setShowSettings(true);
       }
 
@@ -3991,13 +4019,14 @@
                   {syncStatus !== 'disconnected' && (
                     <button
                       onClick={pushToCloud}
-                      className={"p-2 rounded-lg flex items-center gap-1 " + (syncStatus === 'syncing' ? 'text-yellow-500' : 'text-green-500 hover:bg-green-50')}
+                      className={"p-2 rounded-lg flex items-center gap-1.5 transition-all duration-300 " + (syncStatus === 'syncing' ? 'text-yellow-500 bg-yellow-50' : 'text-green-500 hover:bg-green-50')}
                       title={syncStatus === 'syncing' ? 'Syncing...' : 'Cloud synced - click to push'}
                     >
-                      <div className={"w-2 h-2 rounded-full " + (syncStatus === 'syncing' ? 'bg-yellow-500 animate-pulse' : 'bg-green-500')}></div>
-                      <svg className={"w-4 h-4 " + (syncStatus === 'syncing' ? 'animate-spin' : '')} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className={"w-2 h-2 rounded-full transition-all duration-300 " + (syncStatus === 'syncing' ? 'bg-yellow-400 sync-breathing' : 'bg-green-500')}></div>
+                      <svg className={"w-4 h-4 transition-all duration-300 " + (syncStatus === 'syncing' ? 'sync-wave' : '')} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
+                      {syncStatus === 'syncing' && <span className="text-xs font-medium">Syncing</span>}
                     </button>
                   )}
                   <button onClick={openSettings} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
