@@ -3334,17 +3334,6 @@
         setIsUnlocked(true);
       }
 
-      // Show PIN lock screen if not unlocked
-      if (!isUnlocked) {
-        return (
-          <PinLockScreen
-            storedPin={DEFAULT_PIN}
-            onUnlock={handleUnlock}
-            onSetPin={function() {}}
-          />
-        );
-      }
-
       // Main section: 'mealprep' or 'tracker'
       var [mainSection, setMainSection] = useState('mealprep');
       // Sub-views for meal prep: 'plan', 'recipes', 'groceries', 'pantry'
@@ -4397,6 +4386,17 @@
       var week2SunRecipe = mealPlan.week2_sun ? allRecipes.find(function(r) { return r.id === mealPlan.week2_sun; }) : null;
       var week2WedRecipe = mealPlan.week2_wed ? allRecipes.find(function(r) { return r.id === mealPlan.week2_wed; }) : null;
 
+      // Show PIN lock screen if not unlocked
+      if (!isUnlocked) {
+        return (
+          <PinLockScreen
+            storedPin={DEFAULT_PIN}
+            onUnlock={handleUnlock}
+            onSetPin={function() {}}
+          />
+        );
+      }
+
       return (
         <div className="min-h-screen bg-gray-50">
           {/* Modals */}
@@ -4629,8 +4629,9 @@
                     </button>
                   </div>
                   <div className="grid grid-cols-7 border-b border-gray-100">
-                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(function(day) {
-                      return <div key={day} className="py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wider">{day}</div>;
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(function(day, i) {
+                      var fullDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i];
+                      return <div key={i} className="py-2 md:py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wider"><span className="hidden md:inline">{fullDay}</span><span className="md:hidden">{day}</span></div>;
                     })}
                   </div>
                   <div className="grid grid-cols-7">
@@ -4644,26 +4645,27 @@
                         <div
                           key={idx}
                           onClick={dayNum ? function() { setSelectedFoodLogDay(dayNum); setShowFoodLog(true); } : undefined}
-                          className={"p-2 min-h-[100px] border-r border-b border-gray-100 " + (todayClass ? 'bg-amber-50' : '') + (dayNum ? ' cursor-pointer hover:bg-gray-50 transition-colors' : 'bg-gray-50')}
+                          className={"p-1 md:p-2 min-h-[60px] md:min-h-[100px] border-r border-b border-gray-100 " + (todayClass ? 'bg-amber-50' : '') + (dayNum ? ' cursor-pointer hover:bg-gray-50 transition-colors' : 'bg-gray-50')}
                         >
                           {dayNum && (
                             <div>
-                              <div className="flex items-center justify-between mb-1">
-                                <span className={"text-sm font-medium " + (todayClass ? 'text-amber-600' : 'text-gray-700')}>{dayNum}</span>
-                                {hasLogged && <span className="text-xs bg-green-100 text-green-600 px-1.5 py-0.5 rounded">Logged</span>}
+                              <div className="flex items-center justify-between mb-0.5 md:mb-1">
+                                <span className={"text-xs md:text-sm font-medium " + (todayClass ? 'text-amber-600' : 'text-gray-700')}>{dayNum}</span>
+                                {hasLogged && <span className="hidden md:inline text-xs bg-green-100 text-green-600 px-1.5 py-0.5 rounded">Logged</span>}
+                                {hasLogged && <span className="md:hidden w-2 h-2 bg-green-500 rounded-full"></span>}
                               </div>
                               {hasLogged ? (
                                 <div className="space-y-0.5">
-                                  <div className="text-xs font-medium text-green-700">{dayActualMacros.protein}g P • {dayActualMacros.calories} cal</div>
-                                  <div className="text-xs text-gray-400">{dayActualMacros.carbs}g C • {dayActualMacros.fat}g F</div>
+                                  <div className="text-xs font-medium text-green-700 truncate"><span className="hidden md:inline">{dayActualMacros.protein}g P • {dayActualMacros.calories} cal</span><span className="md:hidden">{dayActualMacros.protein}g</span></div>
+                                  <div className="hidden md:block text-xs text-gray-400">{dayActualMacros.carbs}g C • {dayActualMacros.fat}g F</div>
                                 </div>
                               ) : plannedMacros ? (
                                 <div className="space-y-0.5 opacity-50">
-                                  <div className="text-xs text-gray-500 truncate">Planned: {plannedMacros.recipeName}</div>
-                                  <div className="text-xs text-gray-400">{plannedMacros.protein}g P</div>
+                                  <div className="hidden md:block text-xs text-gray-500 truncate">Planned: {plannedMacros.recipeName}</div>
+                                  <div className="text-xs text-gray-400"><span className="hidden md:inline">{plannedMacros.protein}g P</span><span className="md:hidden">•</span></div>
                                 </div>
                               ) : (
-                                <div className="text-xs text-gray-300">—</div>
+                                <div className="text-xs text-gray-300 hidden md:block">—</div>
                               )}
                             </div>
                           )}
@@ -4691,8 +4693,9 @@
                     </button>
                   </div>
                   <div className="grid grid-cols-7 border-b border-gray-100">
-                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(function(day) {
-                      return <div key={day} className="py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wider">{day}</div>;
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(function(day, i) {
+                      var fullDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i];
+                      return <div key={i} className="py-2 md:py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wider"><span className="hidden md:inline">{fullDay}</span><span className="md:hidden">{day}</span></div>;
                     })}
                   </div>
                   <div className="grid grid-cols-7">
@@ -4705,21 +4708,22 @@
                         <div
                           key={idx}
                           onClick={dayNum ? function() { handleDayClick(dayNum); } : undefined}
-                          className={"p-2 min-h-[100px] border-r border-b border-gray-100 " + (todayClass ? 'bg-amber-50' : '') + (dayNum ? ' cursor-pointer hover:bg-gray-50 transition-colors' : 'bg-gray-50')}
+                          className={"p-1 md:p-2 min-h-[60px] md:min-h-[100px] border-r border-b border-gray-100 " + (todayClass ? 'bg-amber-50' : '') + (dayNum ? ' cursor-pointer hover:bg-gray-50 transition-colors' : 'bg-gray-50')}
                         >
                           {dayNum && (
                             <div>
-                              <div className="flex items-center justify-between mb-1">
-                                <span className={"text-sm font-medium " + (todayClass ? 'text-amber-600' : 'text-gray-700')}>{dayNum}</span>
-                                {cookDay && <span className="text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded">Cook</span>}
+                              <div className="flex items-center justify-between mb-0.5 md:mb-1">
+                                <span className={"text-xs md:text-sm font-medium " + (todayClass ? 'text-amber-600' : 'text-gray-700')}>{dayNum}</span>
+                                {cookDay && <span className="hidden md:inline text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded">Cook</span>}
+                                {cookDay && <span className="md:hidden w-2 h-2 bg-orange-400 rounded-full"></span>}
                               </div>
                               {macros ? (
                                 <div className="space-y-0.5">
-                                  <div className="text-xs font-medium text-gray-800 truncate">{macros.recipeName}</div>
-                                  <div className="text-xs text-gray-500">{macros.protein}g P • {macros.calories} cal</div>
+                                  <div className="hidden md:block text-xs font-medium text-gray-800 truncate">{macros.recipeName}</div>
+                                  <div className="text-xs text-gray-500 truncate"><span className="hidden md:inline">{macros.protein}g P • {macros.calories} cal</span><span className="md:hidden">{macros.protein}g</span></div>
                                 </div>
                               ) : (
-                                <div className="text-xs text-gray-300">—</div>
+                                <div className="text-xs text-gray-300 hidden md:block">—</div>
                               )}
                             </div>
                           )}
