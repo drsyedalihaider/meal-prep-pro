@@ -683,66 +683,28 @@
     function PinLockScreen(props) {
       var onUnlock = props.onUnlock;
       var storedPin = props.storedPin;
-      var onSetPin = props.onSetPin;
 
       var [pin, setPin] = useState('');
-      var [confirmPin, setConfirmPin] = useState('');
-      var [mode, setMode] = useState(storedPin ? 'unlock' : 'setup');
       var [error, setError] = useState('');
 
       function handlePinInput(digit) {
-        if (mode === 'unlock') {
-          var newPin = pin + digit;
-          setPin(newPin);
-          setError('');
-          if (newPin.length === storedPin.length) {
-            if (newPin === storedPin) {
-              onUnlock();
-            } else {
-              setError('Incorrect PIN');
-              setPin('');
-            }
-          }
-        } else if (mode === 'setup') {
-          var newPin = pin + digit;
-          setPin(newPin);
-          if (newPin.length >= 4 && newPin.length <= 6) {
-            // Show confirm button
-          }
-        } else if (mode === 'confirm') {
-          var newConfirm = confirmPin + digit;
-          setConfirmPin(newConfirm);
-          setError('');
-          if (newConfirm.length === pin.length) {
-            if (newConfirm === pin) {
-              onSetPin(pin);
-              onUnlock();
-            } else {
-              setError('PINs do not match');
-              setConfirmPin('');
-            }
+        var newPin = pin + digit;
+        setPin(newPin);
+        setError('');
+        if (newPin.length === storedPin.length) {
+          if (newPin === storedPin) {
+            onUnlock();
+          } else {
+            setError('Incorrect PIN');
+            setPin('');
           }
         }
       }
 
       function handleDelete() {
-        if (mode === 'confirm') {
-          setConfirmPin(confirmPin.slice(0, -1));
-        } else {
-          setPin(pin.slice(0, -1));
-        }
+        setPin(pin.slice(0, -1));
         setError('');
       }
-
-      function handleConfirmSetup() {
-        if (pin.length >= 4) {
-          setMode('confirm');
-          setConfirmPin('');
-        }
-      }
-
-      var currentPin = mode === 'confirm' ? confirmPin : pin;
-      var maxLength = mode === 'unlock' ? storedPin.length : 6;
 
       return (
         <div className="fixed inset-0 bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center z-50">
@@ -751,17 +713,15 @@
               <span className="text-3xl">🍽️</span>
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Meal Prep Pro</h1>
-            <p className="text-gray-400 mb-8">
-              {mode === 'setup' ? 'Create a 4-6 digit PIN' : mode === 'confirm' ? 'Confirm your PIN' : 'Enter your PIN'}
-            </p>
+            <p className="text-gray-400 mb-8">Enter PIN to continue</p>
 
             {/* PIN Dots */}
             <div className="flex justify-center gap-3 mb-6">
-              {Array.from({ length: maxLength }).map(function(_, i) {
+              {Array.from({ length: storedPin.length }).map(function(_, i) {
                 return (
                   <div
                     key={i}
-                    className={"w-4 h-4 rounded-full transition-all " + (i < currentPin.length ? 'bg-white scale-110' : 'bg-white/20')}
+                    className={"w-4 h-4 rounded-full transition-all " + (i < pin.length ? 'bg-white scale-110' : 'bg-white/20')}
                   />
                 );
               })}
@@ -796,29 +756,6 @@
                 ⌫
               </button>
             </div>
-
-            {mode === 'setup' && pin.length >= 4 && (
-              <button
-                onClick={handleConfirmSetup}
-                className="mt-6 px-8 py-3 bg-white text-gray-900 rounded-full font-medium hover:bg-gray-100 transition-all"
-              >
-                Continue →
-              </button>
-            )}
-
-            {mode === 'unlock' && (
-              <button
-                onClick={function() {
-                  if (confirm('Reset PIN? This will clear all local data.')) {
-                    localStorage.clear();
-                    window.location.reload();
-                  }
-                }}
-                className="mt-8 text-white/40 text-sm hover:text-white/60"
-              >
-                Forgot PIN?
-              </button>
-            )}
           </div>
         </div>
       );
@@ -3389,14 +3326,9 @@
       var currentMonth = today.getMonth();
       var currentYear = today.getFullYear();
 
-      // PIN Lock State
-      var [storedPin, setStoredPin] = useState(function() { return localStorage.getItem('mealprep-pin') || ''; });
-      var [isUnlocked, setIsUnlocked] = useState(function() { return !localStorage.getItem('mealprep-pin'); });
-
-      function handleSetPin(pin) {
-        localStorage.setItem('mealprep-pin', pin);
-        setStoredPin(pin);
-      }
+      // PIN Lock State - hardcoded PIN for access
+      var DEFAULT_PIN = '20046';
+      var [isUnlocked, setIsUnlocked] = useState(false);
 
       function handleUnlock() {
         setIsUnlocked(true);
@@ -3406,9 +3338,9 @@
       if (!isUnlocked) {
         return (
           <PinLockScreen
-            storedPin={storedPin}
+            storedPin={DEFAULT_PIN}
             onUnlock={handleUnlock}
-            onSetPin={handleSetPin}
+            onSetPin={function() {}}
           />
         );
       }
