@@ -2472,6 +2472,10 @@
           var valueToStore = typeof value === 'function' ? value(storedValue) : value;
           setStoredValue(valueToStore);
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
+          // Dispatch custom event to trigger auto-sync
+          if (key.startsWith('mealprep-')) {
+            window.dispatchEvent(new CustomEvent('mealprep-data-change', { detail: { key: key } }));
+          }
         } catch (e) { console.error(e); }
       }
       return [storedValue, setValue];
@@ -2893,14 +2897,165 @@
 
       // Cloud Sync State
       var [syncStatus, setSyncStatus] = useState('disconnected');
+      var [lastSyncTime, setLastSyncTime] = useState(null);
+      var autoSyncTimeoutRef = React.useRef(null);
 
-      // Initialize JSONbin connection check
+      // Auto-sync: silently push to cloud (no alerts)
+      function autoSyncToCloud() {
+        var jsonbinKey = localStorage.getItem('mealprep-jsonbin-key');
+        var jsonbinId = localStorage.getItem('mealprep-jsonbin-id');
+        if (!jsonbinKey || !jsonbinId) return;
+
+        setSyncStatus('syncing');
+
+        fetch('https://api.jsonbin.io/v3/b/' + jsonbinId + '/latest', {
+          method: 'GET',
+          headers: { 'X-Master-Key': jsonbinKey }
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(cloudResult) {
+          var cloudData = cloudResult.record || {};
+          var localData = { updated: new Date().toISOString() };
+
+          SYNC_KEYS.forEach(function(key) {
+            var val = localStorage.getItem(key);
+            if (val) {
+              try { localData[key] = JSON.parse(val); } catch (e) {}
+            }
+          });
+
+          var mergedData = { updated: localData.updated };
+          SYNC_KEYS.forEach(function(key) {
+            var cloudVal = cloudData[key];
+            var localVal = localData[key];
+
+            if (Array.isArray(localVal) && Array.isArray(cloudVal)) {
+              var merged = cloudVal.slice();
+              localVal.forEach(function(localItem) {
+                var existingIndex = merged.findIndex(function(m) { return m.id === localItem.id; });
+                if (existingIndex >= 0) {
+                  merged[existingIndex] = localItem;
+                } else {
+                  merged.push(localItem);
+                }
+              });
+              mergedData[key] = merged;
+            } else if (typeof localVal === 'object' && typeof cloudVal === 'object' && localVal !== null && cloudVal !== null && !Array.isArray(localVal)) {
+              mergedData[key] = Object.assign({}, cloudVal, localVal);
+            } else if (localVal !== undefined) {
+              mergedData[key] = localVal;
+            } else if (cloudVal !== undefined) {
+              mergedData[key] = cloudVal;
+            }
+          });
+
+          return fetch('https://api.jsonbin.io/v3/b/' + jsonbinId, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Master-Key': jsonbinKey },
+            body: JSON.stringify(mergedData)
+          });
+        })
+        .then(function() {
+          setSyncStatus('connected');
+          setLastSyncTime(new Date());
+          console.log('Auto-synced to cloud');
+        })
+        .catch(function(err) {
+          console.error('Auto-sync error:', err);
+          setSyncStatus('connected');
+        });
+      }
+
+      // Debounced auto-sync: triggers 2 seconds after last change
+      function triggerAutoSync() {
+        if (autoSyncTimeoutRef.current) {
+          clearTimeout(autoSyncTimeoutRef.current);
+        }
+        autoSyncTimeoutRef.current = setTimeout(function() {
+          autoSyncToCloud();
+        }, 2000);
+      }
+
+      // Listen for data changes and auto-sync
+      useEffect(function() {
+        function handleDataChange() {
+          triggerAutoSync();
+        }
+        // Listen for custom event from useLocalStorage (same tab)
+        window.addEventListener('mealprep-data-change', handleDataChange);
+        // Listen for storage event (other tabs)
+        window.addEventListener('storage', function(e) {
+          if (e.key && e.key.startsWith('mealprep-')) handleDataChange();
+        });
+        return function() {
+          window.removeEventListener('mealprep-data-change', handleDataChange);
+        };
+      }, []);
+
+      // Initialize: check connection and auto-pull on load
       useEffect(function() {
         var jsonbinKey = localStorage.getItem('mealprep-jsonbin-key');
         var jsonbinId = localStorage.getItem('mealprep-jsonbin-id');
 
         if (jsonbinKey && jsonbinId) {
           setSyncStatus('connected');
+          // Auto-pull on load (silent)
+          fetch('https://api.jsonbin.io/v3/b/' + jsonbinId + '/latest', {
+            method: 'GET',
+            headers: { 'X-Master-Key': jsonbinKey }
+          })
+          .then(function(res) { return res.json(); })
+          .then(function(result) {
+            if (result.record) {
+              var cloudData = result.record;
+              var needsReload = false;
+
+              SYNC_KEYS.forEach(function(key) {
+                var cloudVal = cloudData[key];
+                var localVal = null;
+                try {
+                  var stored = localStorage.getItem(key);
+                  if (stored) localVal = JSON.parse(stored);
+                } catch (e) {}
+
+                if (Array.isArray(cloudVal) && Array.isArray(localVal)) {
+                  var merged = localVal.slice();
+                  cloudVal.forEach(function(cloudItem) {
+                    var existingIndex = merged.findIndex(function(m) { return m.id === cloudItem.id; });
+                    if (existingIndex >= 0) {
+                      if (JSON.stringify(merged[existingIndex]) !== JSON.stringify(cloudItem)) {
+                        merged[existingIndex] = cloudItem;
+                        needsReload = true;
+                      }
+                    } else {
+                      merged.push(cloudItem);
+                      needsReload = true;
+                    }
+                  });
+                  localStorage.setItem(key, JSON.stringify(merged));
+                } else if (typeof cloudVal === 'object' && cloudVal !== null && typeof localVal === 'object' && localVal !== null && !Array.isArray(cloudVal)) {
+                  var merged = Object.assign({}, localVal, cloudVal);
+                  if (JSON.stringify(merged) !== JSON.stringify(localVal)) {
+                    localStorage.setItem(key, JSON.stringify(merged));
+                    needsReload = true;
+                  }
+                } else if (cloudVal !== undefined && cloudVal !== null && JSON.stringify(cloudVal) !== JSON.stringify(localVal)) {
+                  localStorage.setItem(key, JSON.stringify(cloudVal));
+                  needsReload = true;
+                }
+              });
+
+              if (needsReload) {
+                console.log('Cloud data merged, reloading...');
+                window.location.reload();
+              } else {
+                console.log('Already in sync with cloud');
+              }
+            }
+          })
+          .catch(function(err) {
+            console.log('Auto-pull skipped:', err.message);
+          });
         }
       }, []);
 
@@ -2981,58 +3136,88 @@
         .then(function(result) {
           if (result.metadata) {
             console.log('Data merged and pushed to JSONbin');
+            setLastSyncTime(new Date());
             setSyncStatus('connected');
-            alert('Data synced to cloud!');
           } else {
             console.error('Sync error:', result);
-            alert('Sync failed: ' + (result.message || 'Unknown error'));
             setSyncStatus('connected');
           }
         })
         .catch(function(err) {
           console.error('Sync error:', err);
-          alert('Sync failed: ' + err.message);
           setSyncStatus('connected');
         });
       }
 
-      // Pull data from JSONbin.io
+      // Pull data from JSONbin.io - MERGES with local data instead of overwriting
       function pullFromCloud() {
         var jsonbinKey = localStorage.getItem('mealprep-jsonbin-key');
         var jsonbinId = localStorage.getItem('mealprep-jsonbin-id');
 
-        if (!jsonbinKey || !jsonbinId) {
-          alert('Please configure cloud sync in Settings first.');
-          return;
-        }
+        if (!jsonbinKey || !jsonbinId) return;
 
         setSyncStatus('syncing');
 
         fetch('https://api.jsonbin.io/v3/b/' + jsonbinId + '/latest', {
           method: 'GET',
-          headers: {
-            'X-Master-Key': jsonbinKey
-          }
+          headers: { 'X-Master-Key': jsonbinKey }
         })
         .then(function(res) { return res.json(); })
         .then(function(result) {
           if (result.record) {
-            Object.keys(result.record).forEach(function(key) {
-              if (key.startsWith('mealprep-')) {
-                localStorage.setItem(key, JSON.stringify(result.record[key]));
+            var cloudData = result.record;
+            var hasChanges = false;
+
+            SYNC_KEYS.forEach(function(key) {
+              var cloudVal = cloudData[key];
+              var localVal = null;
+              try {
+                var stored = localStorage.getItem(key);
+                if (stored) localVal = JSON.parse(stored);
+              } catch (e) {}
+
+              var merged;
+              if (Array.isArray(cloudVal) && Array.isArray(localVal)) {
+                merged = localVal.slice();
+                cloudVal.forEach(function(cloudItem) {
+                  var existingIndex = merged.findIndex(function(m) { return m.id === cloudItem.id; });
+                  if (existingIndex >= 0) {
+                    if (JSON.stringify(merged[existingIndex]) !== JSON.stringify(cloudItem)) {
+                      merged[existingIndex] = cloudItem;
+                      hasChanges = true;
+                    }
+                  } else {
+                    merged.push(cloudItem);
+                    hasChanges = true;
+                  }
+                });
+                localStorage.setItem(key, JSON.stringify(merged));
+              } else if (typeof cloudVal === 'object' && cloudVal !== null && typeof localVal === 'object' && localVal !== null && !Array.isArray(cloudVal)) {
+                merged = Object.assign({}, localVal, cloudVal);
+                if (JSON.stringify(merged) !== JSON.stringify(localVal)) {
+                  localStorage.setItem(key, JSON.stringify(merged));
+                  hasChanges = true;
+                }
+              } else if (cloudVal !== undefined && cloudVal !== null) {
+                if (JSON.stringify(cloudVal) !== JSON.stringify(localVal)) {
+                  localStorage.setItem(key, JSON.stringify(cloudVal));
+                  hasChanges = true;
+                }
               }
             });
-            alert('Data synced from cloud! Refreshing...');
-            window.location.reload();
+
+            setLastSyncTime(new Date());
+            setSyncStatus('connected');
+            if (hasChanges) {
+              console.log('Cloud data merged, reloading...');
+              window.location.reload();
+            }
           } else {
-            console.error('Pull error:', result);
-            alert('Pull failed: ' + (result.message || 'No data found'));
             setSyncStatus('connected');
           }
         })
         .catch(function(err) {
           console.error('Pull error:', err);
-          alert('Pull failed: ' + err.message);
           setSyncStatus('connected');
         });
       }
