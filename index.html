@@ -46,13 +46,12 @@
       'mealprep-recipe-images'
     ];
 
-    // ============== RECIPE DATABASE - LOADED DYNAMICALLY ==============
-    // Default recipes are loaded on first launch, then cached in localStorage
-    // Try local file first, then GitHub as fallback
-    const LOCAL_RECIPES_URL = './meal-prep-recipes.json';
-    const GITHUB_RECIPES_URL = 'https://raw.githubusercontent.com/drsyedalihaider/meal-prep-pro/main/meal-prep-recipes.json';
+    // ============== RECIPE DATABASE - LOADED FROM JSONBIN CLOUD ==============
+    // Hardcoded JSONbin credentials - recipes stored in cloud
+    const JSONBIN_API_KEY = '$2a$10$CNcF/q.zWbrO0adp6Pei3ON6Dg.PzuTlcFcKqDrCVquYUz9UsC9rm';
+    const JSONBIN_BIN_ID = '6980189bd0ea881f409a0e6d';
 
-    // Placeholder arrays - will be populated when MealPrepPro loads
+    // Placeholder arrays - populated from JSONbin on load
     var RECIPES = [];
     var DEFAULT_BEVERAGES = [];
     var DEFAULT_BREAKFAST = [];
@@ -62,129 +61,53 @@
     const PROTEIN_PER_MEAL = 63;
 
     // ============== DATA LOADER WRAPPER ==============
+    // Default recipes come from SEED_RECIPES (built into code)
+    // JSONbin stores user data: custom recipes, meal plans, settings, etc.
     function DataLoader(props) {
       var [loading, setLoading] = React.useState(true);
-      var [error, setError] = React.useState(null);
-      var [data, setData] = React.useState(null);
 
       React.useEffect(function() {
-        loadRecipes();
+        initializeApp();
       }, []);
 
-      function loadRecipes() {
-        // Check localStorage first
-        var cached = localStorage.getItem('mealprep-default-recipes');
-        if (cached) {
-          try {
-            var parsed = JSON.parse(cached);
-            applyData(parsed);
-            setData(parsed);
-            setLoading(false);
-            return;
-          } catch (e) {
-            console.error('Failed to parse cached recipes:', e);
-          }
-        }
+      function initializeApp() {
+        // Apply default recipes from SEED_RECIPES
+        RECIPES = SEED_RECIPES.recipes || [];
+        DEFAULT_BEVERAGES = SEED_RECIPES.beverages || [];
+        DEFAULT_BREAKFAST = SEED_RECIPES.breakfast || [];
+        DEFAULT_SNACKS = SEED_RECIPES.snacks || [];
 
-        // Try loading from JSONbin if configured
-        var jsonbinKey = localStorage.getItem('mealprep-jsonbin-key');
-        var jsonbinId = localStorage.getItem('mealprep-jsonbin-id');
+        // Store JSONbin credentials for sync features
+        localStorage.setItem('mealprep-jsonbin-key', JSONBIN_API_KEY);
+        localStorage.setItem('mealprep-jsonbin-id', JSONBIN_BIN_ID);
 
-        if (jsonbinKey && jsonbinId) {
-          fetch('https://api.jsonbin.io/v3/b/' + jsonbinId + '/latest', {
-            method: 'GET',
-            headers: { 'X-Master-Key': jsonbinKey }
-          })
-          .then(function(res) { return res.json(); })
-          .then(function(result) {
-            if (result.record && result.record.defaultRecipes) {
-              var recipesData = result.record.defaultRecipes;
-              localStorage.setItem('mealprep-default-recipes', JSON.stringify(recipesData));
-              applyData(recipesData);
-              setData(recipesData);
-              setLoading(false);
-            } else {
-              loadFromGithub(jsonbinKey, jsonbinId);
-            }
-          })
-          .catch(function(err) {
-            console.error('JSONbin load failed:', err);
-            loadFromGithub(jsonbinKey, jsonbinId);
-          });
-        } else {
-          loadFromGithub(null, null);
-        }
-      }
+        // Load user data from JSONbin in background
+        loadUserDataFromCloud();
 
-      function loadFromGithub(jsonbinKey, jsonbinId) {
-        // Try local file first
-        fetch(LOCAL_RECIPES_URL)
-          .then(function(res) {
-            if (!res.ok) throw new Error('Local file not found');
-            return res.json();
-          })
-          .then(function(recipesData) {
-            handleRecipesLoaded(recipesData, jsonbinKey, jsonbinId);
-          })
-          .catch(function(localErr) {
-            console.log('Local recipes not found, trying GitHub...');
-            // Fallback to GitHub
-            fetch(GITHUB_RECIPES_URL)
-              .then(function(res) {
-                if (!res.ok) throw new Error('GitHub file not found');
-                return res.json();
-              })
-              .then(function(recipesData) {
-                handleRecipesLoaded(recipesData, jsonbinKey, jsonbinId);
-              })
-              .catch(function(err) {
-                console.error('Failed to load recipes:', err);
-                setError('Failed to load recipes. Please make sure meal-prep-recipes.json is in the same folder as index.html, or check your internet connection.');
-                setLoading(false);
-              });
-          });
-      }
-
-      function handleRecipesLoaded(recipesData, jsonbinKey, jsonbinId) {
-        localStorage.setItem('mealprep-default-recipes', JSON.stringify(recipesData));
-        applyData(recipesData);
-        setData(recipesData);
+        // Don't wait for cloud - show app immediately
         setLoading(false);
-
-        // Upload to JSONbin if configured
-        if (jsonbinKey && jsonbinId) {
-          uploadToJsonbin(jsonbinKey, jsonbinId, recipesData);
-        }
       }
 
-      function uploadToJsonbin(key, binId, recipesData) {
-        fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest', {
+      function loadUserDataFromCloud() {
+        fetch('https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID + '/latest', {
           method: 'GET',
-          headers: { 'X-Master-Key': key }
+          headers: { 'X-Master-Key': JSONBIN_API_KEY }
         })
         .then(function(res) { return res.json(); })
-        .then(function(existing) {
-          var newData = existing.record || {};
-          newData.defaultRecipes = recipesData;
-          return fetch('https://api.jsonbin.io/v3/b/' + binId, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Master-Key': key
-            },
-            body: JSON.stringify(newData)
-          });
+        .then(function(data) {
+          if (data.record) {
+            // Sync user data to localStorage
+            Object.keys(data.record).forEach(function(key) {
+              if (key.startsWith('mealprep-')) {
+                localStorage.setItem(key, JSON.stringify(data.record[key]));
+              }
+            });
+            console.log('User data synced from cloud');
+          }
         })
         .catch(function(err) {
-          console.error('Failed to upload to JSONbin:', err);
+          console.log('Cloud sync skipped:', err.message);
         });
-      }
-
-      function applyData(recipesData) {
-        RECIPES = recipesData.recipes || [];
-        DEFAULT_BEVERAGES = recipesData.beverages || [];
-        DEFAULT_BREAKFAST = recipesData.breakfast || [];
-        DEFAULT_SNACKS = recipesData.snacks || [];
       }
 
       if (loading) {
@@ -195,30 +118,7 @@
                 <span className="text-4xl">🍽️</span>
               </div>
               <h1 className="text-2xl font-bold text-white mb-2">Meal Prep Pro</h1>
-              <p className="text-gray-400 mb-4">Loading recipes...</p>
-              <div className="w-48 h-1 bg-white/20 rounded-full mx-auto overflow-hidden">
-                <div className="h-full bg-white/60 rounded-full animate-[loading_1s_ease-in-out_infinite]" style={{width: '60%'}}></div>
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      if (error) {
-        return (
-          <div className="fixed inset-0 bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center z-50">
-            <div className="text-center p-8 max-w-md">
-              <div className="w-20 h-20 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl">⚠️</span>
-              </div>
-              <h1 className="text-2xl font-bold text-white mb-2">Loading Error</h1>
-              <p className="text-gray-400 mb-6">{error}</p>
-              <button
-                onClick={function() { window.location.reload(); }}
-                className="px-6 py-3 bg-white text-gray-900 rounded-xl font-medium hover:bg-gray-100"
-              >
-                Refresh Page
-              </button>
+              <p className="text-gray-400">Loading...</p>
             </div>
           </div>
         );
@@ -226,6 +126,9 @@
 
       return <MealPrepPro />;
     }
+
+    // ============== SEED RECIPES (for first-time setup) ==============
+    const SEED_RECIPES = {"recipes":[{"id":"malai-tikka","name":"Malai Chicken Tikka","category":"chicken","servings":6,"proteinPerServing":62,"caloriesPerServing":520,"carbsPerServing":8,"fatPerServing":28,"image":"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&h=400&fit=crop","description":"Creamy, tender chicken tikka marinated in yogurt and cheese","cookTime":"50 min","ingredients":[{"item":"Chicken breast (boneless)","amount":1.2,"unit":"kg","store":"apna"},{"item":"Greek yogurt","amount":1,"unit":"cup","store":"walmart"},{"item":"Fresh cream","amount":0.5,"unit":"cup","store":"walmart"},{"item":"Processed cheese (grated)","amount":1.5,"unit":"cups","store":"walmart"},{"item":"Ginger-garlic paste","amount":3,"unit":"tbsp","store":"apna"},{"item":"Lemon juice","amount":3,"unit":"tbsp","store":"walmart"},{"item":"Green chili paste","amount":1.5,"unit":"tsp","store":"apna"},{"item":"Green cardamom powder","amount":0.75,"unit":"tsp","store":"apna"},{"item":"White pepper powder","amount":1.5,"unit":"tsp","store":"walmart"},{"item":"Garam masala","amount":1.5,"unit":"tsp","store":"apna"}],"method":["Cut chicken into 1.5-inch cubes. Wash and pat dry.","Mix all marinade ingredients (yogurt, cream, cheese, spices) in a large bowl.","Add chicken, coat well. Cover and refrigerate 2-4 hours (overnight best).","Preheat oven to 220°C (425°F). Line baking tray with foil, lightly oil.","Thread chicken onto skewers or spread on tray. Don't overcrowd.","Bake 15-18 minutes, turning once, until charred spots appear and chicken is cooked through.","Optional: Broil last 2-3 minutes for extra char.","Rest 5 minutes. Serve with mint chutney and lemon wedges."],"mealPrepNote":"EXCELLENT for meal prep! Reheats beautifully in oven or air fryer. Store 4-5 days in fridge. Can freeze marinated raw chicken for up to 1 month."},{"id":"butter-noodles","name":"Butter Noodles with Chicken","category":"chicken","servings":6,"proteinPerServing":58,"caloriesPerServing":720,"carbsPerServing":55,"fatPerServing":32,"image":"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=400&fit=crop","description":"Garlic butter pasta topped with seasoned chicken","cookTime":"45 min","ingredients":[{"item":"Chicken breast","amount":1,"unit":"kg","store":"apna"},{"item":"Spaghetti/Pasta","amount":500,"unit":"g","store":"walmart"},{"item":"Butter","amount":200,"unit":"g","store":"walmart"},{"item":"Garlic (chopped)","amount":0.5,"unit":"cup","store":"walmart"},{"item":"Chicken stock","amount":2,"unit":"cups","store":"walmart"},{"item":"Lemon juice","amount":3,"unit":"tbsp","store":"walmart"},{"item":"Red chili (crushed)","amount":1.5,"unit":"tbsp","store":"apna"},{"item":"Black pepper","amount":1,"unit":"tbsp","store":"walmart"},{"item":"Fresh coriander","amount":3,"unit":"tbsp","store":"apna"}],"method":["Pound chicken to even thickness. Season with salt, pepper, red chilli, lemon juice. Rest 15 min.","Boil pasta in salted water until al dente. Reserve 1 cup pasta water. Drain.","Heat oil + 50g butter in large pan. Cook chicken 5-6 min per side until golden. Remove, slice.","In same pan, add remaining butter and garlic. Sauté 1 minute until fragrant.","Add flour, stir 30 seconds. Pour in chicken stock, stir until slightly thickened.","Add pasta, toss well. Add pasta water if too thick.","Season with herbs, pepper, salt. Top with sliced chicken.","Garnish with fresh coriander. Serve immediately."],"mealPrepNote":"GOOD for meal prep. Store pasta and chicken separately for best texture. Reheat pasta with splash of water/stock. Keeps 3-4 days."},{"id":"chicken-biryani","name":"Chicken Biryani","category":"chicken","servings":8,"proteinPerServing":45,"caloriesPerServing":650,"carbsPerServing":68,"fatPerServing":22,"image":"https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&h=400&fit=crop","description":"Fragrant dum-style biryani with potatoes","cookTime":"90 min","ingredients":[{"item":"Chicken","amount":1,"unit":"kg","store":"apna"},{"item":"Basmati rice","amount":3,"unit":"cups","store":"apna"},{"item":"Onions (sliced)","amount":2,"unit":"pcs","store":"walmart"},{"item":"Potatoes","amount":4,"unit":"pcs","store":"walmart"},{"item":"Yogurt","amount":0.5,"unit":"cup","store":"walmart"},{"item":"Tomatoes","amount":2,"unit":"pcs","store":"walmart"},{"item":"Biryani masala","amount":1,"unit":"packet","store":"apna"},{"item":"Garam masala","amount":2,"unit":"tsp","store":"apna"},{"item":"Green chilies","amount":6,"unit":"pcs","store":"apna"},{"item":"Mint/Coriander","amount":1,"unit":"bunch","store":"apna"},{"item":"Butter","amount":3,"unit":"tbsp","store":"walmart"},{"item":"Oil","amount":0.5,"unit":"cup","store":"walmart"}],"method":["Soak rice in water for 30 minutes. Wash chicken and set aside.","Slice onions thinly (not chop). Cut potatoes into 4 pieces each and boil until just tender.","In oil, fry onions until light golden brown. Remove half for later.","Fry the potatoes in the same oil until golden. Remove and set aside.","Add chicken to the pot with ginger-garlic paste and biryani masala. Cook until color changes.","Add tomatoes, green chilies, mint, dhania and garam masala. Mix well.","On low heat (aanch halki), add yogurt. Stir to prevent curdling.","Separately, boil water with butter, green pepper and salt. Add soaked rice, cook for 10 minutes.","Drain rice. Layer rice over chicken mixture. Add fried potatoes, fried onions and color/kewra.","Sprinkle crushed garam masala. Cover tightly and cook on dum (very low heat) for 20-25 minutes.","Let rest 5 minutes. Gently mix layers. Serve hot."],"mealPrepNote":"Good for meal prep. Stores 3-4 days. Reheat with a splash of water on low heat. Tastes even better the next day!"},{"id":"aloo-keema","name":"Dhaba Style Aloo Keema","category":"beef","servings":8,"proteinPerServing":55,"caloriesPerServing":620,"carbsPerServing":35,"fatPerServing":32,"image":"https://images.unsplash.com/photo-1574653853027-5382a3d23a15?w=600&h=400&fit=crop","description":"Authentic dhaba-style minced beef with potatoes","cookTime":"50 min","ingredients":[{"item":"Beef mince (20% fat)","amount":1.2,"unit":"kg","store":"apna"},{"item":"Potatoes (cubed)","amount":8,"unit":"pcs","store":"walmart"},{"item":"Onions (sliced)","amount":4,"unit":"pcs","store":"walmart"},{"item":"Tomatoes (pureed)","amount":7,"unit":"pcs","store":"walmart"},{"item":"Ginger-garlic paste","amount":2.5,"unit":"tbsp","store":"apna"},{"item":"Yogurt","amount":0.5,"unit":"cup","store":"walmart"},{"item":"Red chili powder","amount":1,"unit":"tbsp","store":"apna"},{"item":"Garam masala","amount":1.5,"unit":"tsp","store":"apna"},{"item":"Kasuri methi","amount":1,"unit":"tbsp","store":"apna"},{"item":"Green chilies","amount":6,"unit":"pcs","store":"apna"},{"item":"Oil","amount":0.75,"unit":"cup","store":"walmart"}],"method":["Heat oil in a large pot. Add whole spices (peppercorns, cinnamon, cardamom) and let them sizzle.","Add sliced onions. Fry on medium heat until deep golden brown (10-12 mins). Don't rush this step.","Add ginger garlic paste. Sauté for 1 minute until fragrant.","Add grinded tomatoes. Cook on medium heat for 4-5 minutes, stirring occasionally.","Add all powdered spices (red chilli, garam masala, turmeric, salt). Mix well and cook for 2 minutes.","Add whisked yogurt. Stir continuously to prevent curdling. Cook until oil separates.","Add beef mince. Break up any lumps and mix well until meat changes color (5-7 mins).","Add kasuri methi, crumble it between your palms while adding.","Add potato cubes. Mix gently. Add water and bring to boil.","Cover and cook on low flame for 20-25 minutes until potatoes are fork-tender.","Garnish with green chillies, ginger julienne, and fresh coriander."],"mealPrepNote":"EXCELLENT for meal prep! Flavors improve overnight. Stores 4-5 days in fridge. Portion into containers. Reheat with splash of water if too thick."},{"id":"nihari","name":"Nihari","category":"beef","servings":8,"proteinPerServing":52,"caloriesPerServing":580,"carbsPerServing":15,"fatPerServing":35,"image":"https://images.unsplash.com/photo-1545247181-516773cae754?w=600&h=400&fit=crop","description":"Slow-cooked beef stew - overnight delicacy","cookTime":"4 hrs","ingredients":[{"item":"Beef shank","amount":1.5,"unit":"kg","store":"apna"},{"item":"Onions","amount":4,"unit":"pcs","store":"walmart"},{"item":"Nihari masala","amount":1,"unit":"packet","store":"apna"},{"item":"Ghee","amount":0.5,"unit":"cup","store":"apna"},{"item":"Ginger","amount":4,"unit":"inch","store":"apna"},{"item":"Wheat flour","amount":4,"unit":"tbsp","store":"walmart"}],"method":["Soak beef shank pieces in water for 30 mins to remove excess blood.","Heat ghee in a large heavy-bottomed pot. Add sliced onions and fry until dark brown.","Add nihari masala and ginger. Sauté for 2 minutes.","Add beef pieces. Sear on high heat until browned on all sides.","Add enough water to cover meat by 3 inches. Bring to a rolling boil.","Reduce heat to lowest setting. Cover tightly and simmer for 3-4 hours.","Make tarka: Mix wheat flour with water to make a thin paste. Pour slowly into the pot while stirring.","Continue cooking on low heat for another 30-45 mins until gravy thickens and meat falls off bone.","The longer it cooks, the better. Traditionally made overnight on very low heat.","Garnish with julienned ginger, green chilies, fresh coriander, and a squeeze of lemon.","Serve hot with naan. Drizzle with extra ghee for authentic taste."],"mealPrepNote":"THE BEST meal prep dish! Nihari actually improves over 2-3 days as spices meld together. Freeze in portions for up to 3 months. Reheat slowly on stovetop."},{"id":"chana-masala","name":"Chana Masala","category":"vegetarian","servings":6,"proteinPerServing":22,"caloriesPerServing":320,"carbsPerServing":48,"fatPerServing":8,"image":"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop","description":"Spiced chickpeas in tangy tomato sauce","cookTime":"40 min","ingredients":[{"item":"Chickpeas","amount":3,"unit":"cans","store":"walmart"},{"item":"Tomatoes","amount":4,"unit":"pcs","store":"walmart"},{"item":"Onions","amount":2,"unit":"pcs","store":"walmart"},{"item":"Chana masala","amount":3,"unit":"tbsp","store":"apna"},{"item":"Ginger-garlic paste","amount":2,"unit":"tbsp","store":"apna"}],"method":["Drain and rinse canned chickpeas. Or soak dried chickpeas overnight and pressure cook until soft.","Heat oil in a pan. Add cumin seeds and let them splutter.","Add sliced onions. Fry until golden brown (6-7 mins).","Add ginger-garlic paste. Sauté for 1 minute.","Add chana masala, red chili powder, coriander powder, and turmeric. Toast for 30 seconds.","Add pureed tomatoes. Cook on medium heat until oil separates (8-10 mins).","Add chickpeas and mix well. Add water to reach desired consistency.","Simmer for 15-20 mins to let chickpeas absorb the flavors.","Add amchur (dry mango powder) or lemon juice for tanginess.","Finish with fresh coriander. Serve hot with bhature, naan, or rice."],"mealPrepNote":"EXCELLENT for meal prep! Vegetarian protein powerhouse. Flavors develop overnight. Freezes perfectly for 2-3 months. Stores 5-6 days refrigerated."},{"id":"daal-makhani","name":"Daal Makhani","category":"vegetarian","servings":8,"proteinPerServing":18,"caloriesPerServing":380,"carbsPerServing":42,"fatPerServing":16,"image":"https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600&h=400&fit=crop","description":"Creamy black lentils slow-cooked overnight","cookTime":"4 hrs","ingredients":[{"item":"Black urad daal","amount":2,"unit":"cups","store":"apna"},{"item":"Kidney beans","amount":1,"unit":"cup","store":"walmart"},{"item":"Butter","amount":100,"unit":"g","store":"walmart"},{"item":"Cream","amount":1,"unit":"cup","store":"walmart"},{"item":"Tomatoes","amount":3,"unit":"pcs","store":"walmart"},{"item":"Ginger-garlic paste","amount":2,"unit":"tbsp","store":"apna"}],"method":["Soak black urad daal and kidney beans overnight (at least 8 hours).","Pressure cook soaked lentils with salt until completely mushy (5-6 whistles). Mash some lentils for creaminess.","In a heavy pot, heat butter. Add ginger-garlic paste and sauté until fragrant.","Add pureed tomatoes, red chili powder, and salt. Cook until oil separates.","Add cooked lentils to the pot. Mix well.","Add water to reach desired consistency. Bring to a simmer.","Cook on the LOWEST heat for 2-3 hours, stirring occasionally. The longer, the better.","Keep adding butter and cream in small amounts throughout cooking.","Daal should become dark and creamy. Taste and adjust seasoning.","Finish with a generous pat of butter, swirl of cream, and kasuri methi.","Garnish with fresh cream and serve with naan or rice."],"mealPrepNote":"KING of meal prep! Daal Makhani is BETTER the next day. Make a big batch - stores 6-7 days. Freezes for months. Add cream when reheating for restaurant-quality taste."}],"beverages":[{"id":"diet-coke","name":"Diet Coke","category":"soda","store":"walmart"},{"id":"coke","name":"Coca-Cola","category":"soda","store":"walmart"},{"id":"oj-tropicana","name":"Tropicana Orange Juice","category":"juice","store":"walmart"},{"id":"mango-juice","name":"Mango Juice","category":"juice","store":"apna"},{"id":"lassi","name":"Lassi (Mango/Sweet)","category":"dairy","store":"apna"},{"id":"chai","name":"Chai Tea","category":"tea","store":"apna"},{"id":"water-case","name":"Water Bottles (Case)","category":"water","store":"walmart"}],"breakfast":[{"id":"eggs-paratha","name":"Eggs with Paratha","emoji":"🍳","protein":25,"calories":450,"items":["Eggs","Frozen Paratha","Oil","Salt"],"store":"apna","directions":"1. Heat paratha on tawa until golden on both sides. 2. Scramble or fry 2-3 eggs with salt and pepper. 3. Serve hot with green chutney or ketchup."},{"id":"eggs-bagel","name":"Eggs with Bagel","emoji":"🥯","protein":22,"calories":380,"items":["Eggs","Bagels","Cream Cheese","Butter"],"store":"walmart","directions":"1. Toast bagel until golden. 2. Spread cream cheese on both halves. 3. Fry or scramble 2 eggs. 4. Place eggs on bagel and serve."},{"id":"oats-protein","name":"Oats with Protein Powder","emoji":"🥣","protein":35,"calories":350,"items":["Oats","Protein Powder","Milk","Banana"],"store":"walmart","directions":"1. Cook 1 cup oats with milk for 3-4 mins. 2. Let cool slightly, then stir in 1 scoop protein powder. 3. Top with sliced banana and enjoy."},{"id":"protein-shake","name":"Protein Shake","emoji":"🥤","protein":30,"calories":250,"items":["Protein Powder","Milk","Banana","Ice"],"store":"walmart","directions":"1. Add 1 scoop protein powder, 1 cup milk, 1 banana to blender. 2. Add ice cubes. 3. Blend until smooth and serve."},{"id":"nihari-naan","name":"Nihari with Naan (Weekend)","emoji":"🍖","protein":45,"calories":700,"items":["Leftover Nihari","Frozen Naan","Ginger","Cilantro"],"store":"apna","directions":"1. Reheat leftover nihari on stove until hot. 2. Heat naan on tawa or in oven. 3. Garnish nihari with fresh ginger slices and cilantro. Serve hot."}],"snacks":[{"id":"protein-bar","name":"Protein Bars","emoji":"🍫","protein":20,"calories":200,"store":"walmart"},{"id":"almonds","name":"Almonds","emoji":"🥜","protein":6,"calories":160,"store":"walmart"},{"id":"greek-yogurt-snack","name":"Greek Yogurt Cup","emoji":"🥛","protein":15,"calories":120,"store":"walmart"},{"id":"samosa","name":"Samosas (Frozen)","emoji":"🥟","protein":4,"calories":180,"store":"apna"},{"id":"fruit","name":"Fresh Fruit","emoji":"🍎","protein":1,"calories":80,"store":"walmart"}]};
 
     function PinLockScreen(props) {
       var onUnlock = props.onUnlock;
