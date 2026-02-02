@@ -4,28 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meal Prep Pro</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            dark: {
-              bg: '#000000',
-              card: '#1a1a1a',
-              border: '#2a2a2a',
-              hover: '#333333'
-            }
-          }
-        }
-      }
-    }
-  </script>
   <!-- JSONbin.io for cloud sync -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,18 +15,10 @@
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #fafafa; font-family: 'Inter', sans-serif; }
-    .dark body, .dark { background: #000000; }
     .serif { font-family: 'Libre Baskerville', serif; }
     @keyframes loading {
       0% { transform: translateX(-100%); }
       100% { transform: translateX(200%); }
-    }
-    @keyframes sync-pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-    .sync-active {
-      animation: sync-pulse 1.2s ease-in-out infinite;
     }
   </style>
 </head>
@@ -69,11 +43,7 @@
       'mealprep-beverage-needs',
       'mealprep-snack-needs',
       'mealprep-pantry-categories',
-      'mealprep-recipe-images',
-      'mealprep-claude-key',
-      'mealprep-openai-key',
-      'mealprep-ai-model',
-      'mealprep-dark-mode'
+      'mealprep-recipe-images'
     ];
 
     // ============== RECIPE DATABASE - LOADED FROM JSONBIN CLOUD ==============
@@ -148,7 +118,7 @@
                 <span className="text-4xl">🍽️</span>
               </div>
               <h1 className="text-2xl font-bold text-white mb-2">Meal Prep Pro</h1>
-              <p className="text-gray-400 dark:text-neutral-500">Loading...</p>
+              <p className="text-gray-400">Loading...</p>
             </div>
           </div>
         );
@@ -187,13 +157,13 @@
       }
 
       return (
-        <div className="fixed inset-0 bg-white dark:bg-neutral-900 dark:bg-black flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center z-50">
           <div className="text-center p-8">
-            <div className="w-16 h-16 bg-gray-100 dark:bg-neutral-900 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <span className="text-3xl">🍽️</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Meal Prep Pro</h1>
-            <p className="text-gray-500 dark:text-neutral-400 mb-8">Enter PIN to continue</p>
+            <h1 className="text-2xl font-bold text-white mb-2">Meal Prep Pro</h1>
+            <p className="text-gray-400 mb-8">Enter PIN to continue</p>
 
             {/* PIN Dots */}
             <div className="flex justify-center gap-3 mb-6">
@@ -201,13 +171,13 @@
                 return (
                   <div
                     key={i}
-                    className={"w-4 h-4 rounded-full transition-all " + (i < pin.length ? 'bg-gray-900 dark:bg-red-500 scale-110' : 'bg-gray-200 dark:bg-neutral-700')}
+                    className={"w-4 h-4 rounded-full transition-all " + (i < pin.length ? 'bg-white scale-110' : 'bg-white/20')}
                   />
                 );
               })}
             </div>
 
-            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+            {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
 
             {/* Number Pad */}
             <div className="grid grid-cols-3 gap-4 max-w-xs mx-auto">
@@ -216,7 +186,7 @@
                   <button
                     key={num}
                     onClick={function() { handlePinInput(num.toString()); }}
-                    className="w-16 h-16 rounded-full bg-gray-100 dark:bg-neutral-800 text-gray-900 dark:text-white text-2xl font-medium hover:bg-gray-200 dark:hover:bg-neutral-700 active:scale-95 transition-all"
+                    className="w-16 h-16 rounded-full bg-white/10 text-white text-2xl font-medium hover:bg-white/20 active:scale-95 transition-all"
                   >
                     {num}
                   </button>
@@ -225,13 +195,13 @@
               <div></div>
               <button
                 onClick={function() { handlePinInput('0'); }}
-                className="w-16 h-16 rounded-full bg-gray-100 dark:bg-neutral-800 text-gray-900 dark:text-white text-2xl font-medium hover:bg-gray-200 dark:hover:bg-neutral-700 active:scale-95 transition-all"
+                className="w-16 h-16 rounded-full bg-white/10 text-white text-2xl font-medium hover:bg-white/20 active:scale-95 transition-all"
               >
                 0
               </button>
               <button
                 onClick={handleDelete}
-                className="w-16 h-16 rounded-full bg-gray-50 dark:bg-neutral-900 text-gray-400 dark:text-neutral-500 text-xl hover:bg-gray-100 dark:hover:bg-neutral-800 active:scale-95 transition-all flex items-center justify-center"
+                className="w-16 h-16 rounded-full bg-white/5 text-white/60 text-xl hover:bg-white/10 active:scale-95 transition-all flex items-center justify-center"
               >
                 ⌫
               </button>
@@ -318,27 +288,27 @@
       }
 
       return (
-        <div className="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto" onClick={function(e) { e.stopPropagation(); }}>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white serif mb-4">Settings</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto" onClick={function(e) { e.stopPropagation(); }}>
+            <h2 className="text-xl font-bold text-gray-900 serif mb-4">Settings</h2>
 
             {/* Settings Tabs */}
-            <div className="flex gap-1 bg-gray-100 dark:bg-neutral-800 p-1 rounded-lg mb-4">
+            <div className="flex gap-1 bg-gray-100 p-1 rounded-lg mb-4">
               <button
                 onClick={function() { setSettingsTab('api'); }}
-                className={settingsTab === 'api' ? "flex-1 px-3 py-2 rounded-md text-sm font-medium bg-white dark:bg-red-600 text-gray-900 dark:text-white shadow-sm dark:shadow-none" : "flex-1 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white"}
+                className={settingsTab === 'api' ? "flex-1 px-3 py-2 rounded-md text-sm font-medium bg-white shadow-sm" : "flex-1 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900"}
               >
                 🤖 AI
               </button>
               <button
                 onClick={function() { setSettingsTab('sync'); }}
-                className={settingsTab === 'sync' ? "flex-1 px-3 py-2 rounded-md text-sm font-medium bg-white dark:bg-red-600 text-gray-900 dark:text-white shadow-sm dark:shadow-none" : "flex-1 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white"}
+                className={settingsTab === 'sync' ? "flex-1 px-3 py-2 rounded-md text-sm font-medium bg-white shadow-sm" : "flex-1 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900"}
               >
                 ☁️ Cloud Sync
               </button>
               <button
                 onClick={function() { setSettingsTab('backup'); }}
-                className={settingsTab === 'backup' ? "flex-1 px-3 py-2 rounded-md text-sm font-medium bg-white dark:bg-red-600 text-gray-900 dark:text-white shadow-sm dark:shadow-none" : "flex-1 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white"}
+                className={settingsTab === 'backup' ? "flex-1 px-3 py-2 rounded-md text-sm font-medium bg-white shadow-sm" : "flex-1 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900"}
               >
                 💾 Backup
               </button>
@@ -349,55 +319,55 @@
               {settingsTab === 'api' && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-2">Claude API Key</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Claude API Key</label>
                     <input
                       type="password"
                       value={tempKey}
                       onChange={function(e) { setTempKey(e.target.value); }}
                       placeholder="Enter your Claude API key (sk-ant-...)"
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     />
-                    <p className="text-xs text-gray-500 dark:text-neutral-400 mt-2">
-                      Get your API key from <a href="https://console.anthropic.com/settings/keys" target="_blank" className="text-blue-600 dark:text-blue-400 hover:underline">Anthropic Console</a>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Get your API key from <a href="https://console.anthropic.com/settings/keys" target="_blank" className="text-blue-600 hover:underline">Anthropic Console</a>
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-2">OpenAI API Key (for Recipe Images)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">OpenAI API Key (for Recipe Images)</label>
                     <input
                       type="password"
                       value={tempOpenaiKey}
                       onChange={function(e) { setTempOpenaiKey(e.target.value); }}
                       placeholder="Enter your OpenAI API key (sk-...)"
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     />
-                    <p className="text-xs text-gray-500 dark:text-neutral-400 mt-2">
-                      Optional - for AI-generated recipe images. Get key from <a href="https://platform.openai.com/api-keys" target="_blank" className="text-blue-600 dark:text-blue-400 hover:underline">OpenAI Platform</a>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Optional - for AI-generated recipe images. Get key from <a href="https://platform.openai.com/api-keys" target="_blank" className="text-blue-600 hover:underline">OpenAI Platform</a>
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-2">AI Model</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">AI Model</label>
                     <div className="space-y-2">
                       {AVAILABLE_MODELS.map(function(model) {
                         return (
                           <button
                             key={model.id}
                             onClick={function() { setSelectedModel(model.id); }}
-                            className={"w-full p-3 rounded-xl border-2 text-left transition-all " + (selectedModel === model.id ? "border-gray-900 dark:border-red-500 bg-gray-50 dark:bg-neutral-800" : "border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600")}
+                            className={"w-full p-3 rounded-xl border-2 text-left transition-all " + (selectedModel === model.id ? "border-gray-900 bg-gray-50" : "border-gray-200 hover:border-gray-300")}
                           >
                             <div className="flex items-center justify-between">
                               <div>
-                                <span className="font-medium text-gray-900 dark:text-white">{model.name}</span>
-                                <span className="text-gray-500 dark:text-neutral-400 text-sm ml-2">{model.description}</span>
+                                <span className="font-medium text-gray-900">{model.name}</span>
+                                <span className="text-gray-500 text-sm ml-2">{model.description}</span>
                               </div>
-                              <span className="text-xs text-gray-400 dark:text-neutral-500">{model.cost}</span>
+                              <span className="text-xs text-gray-400">{model.cost}</span>
                             </div>
                           </button>
                         );
                       })}
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-neutral-400 mt-2">
+                    <p className="text-xs text-gray-500 mt-2">
                       Haiku is recommended for recipe parsing - fast and cost-effective.
                     </p>
                   </div>
@@ -407,20 +377,20 @@
               {/* Cloud Sync Tab */}
               {settingsTab === 'sync' && (
                 <>
-                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-neutral-800 dark:to-neutral-800 border border-purple-200 dark:border-neutral-700 rounded-xl p-4">
-                    <h3 className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-4">
+                    <h3 className="font-medium text-gray-900 flex items-center gap-2">
                       <span className="text-xl">☁️</span> Cloud Sync with JSONbin.io
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-neutral-300 mt-1">
+                    <p className="text-sm text-gray-600 mt-1">
                       Sync your data across all devices. Free tier: 10,000 requests/month.
                     </p>
                   </div>
 
                   {/* Sync Status */}
-                  <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-neutral-800 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                     <div className="flex items-center gap-2">
                       <div className={"w-3 h-3 rounded-full " + (syncStatus === 'connected' ? 'bg-green-500' : syncStatus === 'syncing' ? 'bg-yellow-500 animate-pulse' : 'bg-gray-400')}></div>
-                      <span className="text-sm font-medium text-gray-700 dark:text-neutral-200">
+                      <span className="text-sm font-medium text-gray-700">
                         {syncStatus === 'connected' ? 'Connected' : syncStatus === 'syncing' ? 'Syncing...' : 'Not connected'}
                       </span>
                     </div>
@@ -428,13 +398,13 @@
                       <div className="flex gap-2">
                         <button
                           onClick={onPullFromCloud}
-                          className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-lg text-xs font-medium hover:bg-blue-200 dark:hover:bg-blue-900/50"
+                          className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-200"
                         >
                           ↓ Pull
                         </button>
                         <button
                           onClick={onSync}
-                          className="px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg text-xs font-medium hover:bg-green-200 dark:hover:bg-green-900/50"
+                          className="px-3 py-1.5 bg-green-100 text-green-700 rounded-lg text-xs font-medium hover:bg-green-200"
                         >
                           ↑ Push
                         </button>
@@ -443,50 +413,50 @@
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-2">JSONbin API Key</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">JSONbin API Key</label>
                     <input
                       type="password"
                       value={jsonbinKey}
                       onChange={function(e) { setJsonbinKey(e.target.value); }}
                       placeholder="$2a$10$xxxxx..."
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-red-500"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-2">Bin ID</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Bin ID</label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={jsonbinId}
                         onChange={function(e) { setJsonbinId(e.target.value); }}
                         placeholder="xxxxxxxxxxxxxxxxxxxxxxxx"
-                        className="flex-1 px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-red-500 font-mono"
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono"
                       />
                       <button
                         onClick={createNewBin}
                         disabled={creatingBin || !jsonbinKey}
-                        className="px-4 py-3 bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-neutral-200 rounded-xl hover:bg-gray-200 dark:hover:bg-neutral-700 text-sm font-medium disabled:opacity-50"
+                        className="px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 text-sm font-medium disabled:opacity-50"
                       >
                         {creatingBin ? 'Creating...' : 'Create New'}
                       </button>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-neutral-400 mt-2">
+                    <p className="text-xs text-gray-500 mt-2">
                       Use the same Bin ID on all devices to sync. Create a new bin or paste existing ID.
                     </p>
                   </div>
 
                   <button
                     onClick={handleSaveJsonbin}
-                    className="w-full px-4 py-3 bg-purple-600 dark:bg-red-600 text-white rounded-xl hover:bg-purple-700 dark:hover:bg-red-700 font-medium"
+                    className="w-full px-4 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 font-medium"
                   >
                     Save & Connect
                   </button>
 
-                  <div className="bg-gray-50 dark:bg-neutral-800 rounded-xl p-4 text-sm">
-                    <p className="font-medium text-gray-900 dark:text-white mb-2">📝 Quick Setup (2 mins):</p>
-                    <ol className="list-decimal list-inside space-y-1 text-gray-600 dark:text-neutral-300">
-                      <li>Go to <a href="https://jsonbin.io" target="_blank" className="text-purple-600 dark:text-red-400 hover:underline">jsonbin.io</a> and sign up free</li>
+                  <div className="bg-gray-50 rounded-xl p-4 text-sm">
+                    <p className="font-medium text-gray-900 mb-2">📝 Quick Setup (2 mins):</p>
+                    <ol className="list-decimal list-inside space-y-1 text-gray-600">
+                      <li>Go to <a href="https://jsonbin.io" target="_blank" className="text-purple-600 hover:underline">jsonbin.io</a> and sign up free</li>
                       <li>Click your profile → API Keys</li>
                       <li>Copy your "X-Master-Key" and paste above</li>
                       <li>Click "Create New" to make a bin, or paste an existing Bin ID</li>
@@ -499,11 +469,11 @@
               {/* Backup Tab */}
               {settingsTab === 'backup' && (
                 <>
-                  <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-                    <h3 className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                    <h3 className="font-medium text-gray-900 flex items-center gap-2">
                       <span className="text-xl">💾</span> Local Backup
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-neutral-300 mt-1">
+                    <p className="text-sm text-gray-600 mt-1">
                       Export your data to a JSON file for manual backup or transfer.
                     </p>
                   </div>
@@ -562,18 +532,18 @@
                       />
                     </label>
                   </div>
-                  <p className="text-xs text-gray-500 dark:text-neutral-400">
+                  <p className="text-xs text-gray-500">
                     Export saves all your recipes, meal plans, and settings to a JSON file.
                   </p>
 
                   {/* JSONBin.io Cloud Backup */}
-                  <div className="border-t dark:border-neutral-700 pt-4">
-                    <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4 mb-4">
-                      <h3 className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                  <div className="border-t pt-4">
+                    <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-4">
+                      <h3 className="font-medium text-gray-900 flex items-center gap-2">
                         <span className="text-xl">☁️</span> JSONBin.io Cloud Backup
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-neutral-300 mt-1">
-                        Free cloud backup. Get API key from <a href="https://jsonbin.io" target="_blank" className="text-indigo-600 dark:text-indigo-400 hover:underline">jsonbin.io</a>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Free cloud backup. Get API key from <a href="https://jsonbin.io" target="_blank" className="text-indigo-600 hover:underline">jsonbin.io</a>
                       </p>
                     </div>
 
@@ -583,14 +553,14 @@
                         value={jsonbinKey}
                         onChange={function(e) { setJsonbinKey(e.target.value); }}
                         placeholder="JSONBin API Key (X-Master-Key)"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                       <input
                         type="text"
                         value={jsonbinId}
                         onChange={function(e) { setJsonbinId(e.target.value); }}
                         placeholder="Bin ID (leave empty to create new)"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm"
                       />
                       <div className="flex gap-2">
                         <button
@@ -662,7 +632,7 @@
                           ↓ Pull from Cloud
                         </button>
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-neutral-400">
+                      <p className="text-xs text-gray-500">
                         Save your Bin ID to restore on other devices. Free: 10k requests/month.
                       </p>
                     </div>
@@ -677,7 +647,7 @@
                           window.location.reload();
                         }
                       }}
-                      className="w-full px-4 py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-xl hover:bg-red-200 font-medium"
+                      className="w-full px-4 py-3 bg-red-100 text-red-700 rounded-xl hover:bg-red-200 font-medium"
                     >
                       🗑️ Reset All Data
                     </button>
@@ -687,7 +657,7 @@
             </div>
 
             <div className="flex gap-3 mt-6">
-              <button onClick={onClose} className="flex-1 px-4 py-3 text-gray-700 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white hover:bg-gray-50 dark:bg-neutral-800">
+              <button onClick={onClose} className="flex-1 px-4 py-3 text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50">
                 Cancel
               </button>
               <button onClick={handleSave} className="flex-1 px-4 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800">
@@ -815,12 +785,12 @@
       }
 
       return (
-        <div className="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={handleClose}>
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
-            <div className="p-6 border-b border-gray-200 dark:border-neutral-800">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={handleClose}>
+          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
+            <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-gray-900 serif">Import Recipe with AI</h2>
-                <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 dark:text-neutral-300">
+                <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
@@ -835,7 +805,7 @@
                       value={recipeText}
                       onChange={function(e) { setRecipeText(e.target.value); }}
                       placeholder="Paste your recipe here - include ingredients, amounts, and cooking instructions..."
-                      className="w-full h-64 px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none"
+                      className="w-full h-64 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none"
                     />
                   </div>
                   {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -851,7 +821,7 @@
                         type="text"
                         value={parsedRecipe.name}
                         onChange={function(e) { updateField('name', e.target.value); }}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                       />
                     </div>
                     <div>
@@ -860,7 +830,7 @@
                         type="text"
                         value={parsedRecipe.cookTime}
                         onChange={function(e) { updateField('cookTime', e.target.value); }}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                       />
                     </div>
                   </div>
@@ -871,7 +841,7 @@
                       type="text"
                       value={parsedRecipe.description}
                       onChange={function(e) { updateField('description', e.target.value); }}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                     />
                   </div>
 
@@ -882,7 +852,7 @@
                         type="number"
                         value={parsedRecipe.servings}
                         onChange={function(e) { updateField('servings', parseInt(e.target.value)); }}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                       />
                     </div>
                     <div>
@@ -891,7 +861,7 @@
                         type="number"
                         value={parsedRecipe.proteinPerServing}
                         onChange={function(e) { updateField('proteinPerServing', parseInt(e.target.value)); }}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                       />
                     </div>
                     <div>
@@ -900,7 +870,7 @@
                         type="number"
                         value={parsedRecipe.caloriesPerServing}
                         onChange={function(e) { updateField('caloriesPerServing', parseInt(e.target.value)); }}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                       />
                     </div>
                     <div>
@@ -909,7 +879,7 @@
                         type="number"
                         value={parsedRecipe.carbsPerServing}
                         onChange={function(e) { updateField('carbsPerServing', parseInt(e.target.value)); }}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                       />
                     </div>
                     <div>
@@ -918,7 +888,7 @@
                         type="number"
                         value={parsedRecipe.fatPerServing}
                         onChange={function(e) { updateField('fatPerServing', parseInt(e.target.value)); }}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                       />
                     </div>
                   </div>
@@ -933,24 +903,24 @@
                               type="text"
                               value={ing.item}
                               onChange={function(e) { updateIngredient(i, 'item', e.target.value); }}
-                              className="flex-1 px-2 py-1.5 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white"
+                              className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded-lg"
                             />
                             <input
                               type="number"
                               value={ing.amount}
                               onChange={function(e) { updateIngredient(i, 'amount', parseFloat(e.target.value)); }}
-                              className="w-16 px-2 py-1.5 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white"
+                              className="w-16 px-2 py-1.5 text-sm border border-gray-300 rounded-lg"
                             />
                             <input
                               type="text"
                               value={ing.unit}
                               onChange={function(e) { updateIngredient(i, 'unit', e.target.value); }}
-                              className="w-16 px-2 py-1.5 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white"
+                              className="w-16 px-2 py-1.5 text-sm border border-gray-300 rounded-lg"
                             />
                             <select
                               value={ing.store}
                               onChange={function(e) { updateIngredient(i, 'store', e.target.value); }}
-                              className="w-24 px-2 py-1.5 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white"
+                              className="w-24 px-2 py-1.5 text-sm border border-gray-300 rounded-lg"
                             >
                               <option value="walmart">Walmart</option>
                               <option value="apna">Apna</option>
@@ -979,7 +949,7 @@
                 </button>
               ) : (
                 <>
-                  <button onClick={function() { setStep('input'); }} className="flex-1 px-4 py-3 text-gray-700 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white hover:bg-gray-50 dark:bg-neutral-800">
+                  <button onClick={function() { setStep('input'); }} className="flex-1 px-4 py-3 text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50">
                     Back
                   </button>
                   <button onClick={handleSave} className="flex-1 px-4 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800">
@@ -1260,15 +1230,15 @@
       }
 
       return (
-        <div className="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={handleClose}>
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={handleClose}>
+          <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
             {/* Header */}
-            <div className="p-6 border-b border-gray-200 dark:border-neutral-800">
+            <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-gray-900 serif">
                   {isEditing ? 'Edit Recipe' : 'Add New Recipe'}
                 </h2>
-                <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 dark:text-neutral-300">
+                <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
@@ -1276,13 +1246,13 @@
               <div className="flex gap-2 mt-4">
                 <button
                   onClick={function() { setMode('form'); }}
-                  className={mode === 'form' ? "px-4 py-2 rounded-lg text-sm font-medium bg-gray-900 text-white dark:text-white" : "px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200"}
+                  className={mode === 'form' ? "px-4 py-2 rounded-lg text-sm font-medium bg-gray-900 text-white" : "px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200"}
                 >
                   Manual Entry
                 </button>
                 <button
                   onClick={function() { setMode('ai'); }}
-                  className={mode === 'ai' ? "px-4 py-2 rounded-lg text-sm font-medium bg-gray-900 text-white dark:text-white" : "px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200"}
+                  className={mode === 'ai' ? "px-4 py-2 rounded-lg text-sm font-medium bg-gray-900 text-white" : "px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200"}
                 >
                   Paste & AI Parse
                 </button>
@@ -1294,12 +1264,12 @@
 
               {mode === 'ai' ? (
                 <div className="space-y-4">
-                  <p className="text-sm text-gray-500 dark:text-neutral-400">Paste your recipe text below - it can be messy! AI will organize it into proper ingredients and directions.</p>
+                  <p className="text-sm text-gray-500">Paste your recipe text below - it can be messy! AI will organize it into proper ingredients and directions.</p>
                   <textarea
                     value={aiText}
                     onChange={function(e) { setAiText(e.target.value); }}
                     placeholder="Paste your recipe here - include ingredients, amounts, and cooking instructions in any format..."
-                    className="w-full h-64 px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none text-sm"
+                    className="w-full h-64 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none text-sm"
                   />
                   <button
                     onClick={parseWithAI}
@@ -1330,7 +1300,7 @@
                         value={recipe.name}
                         onChange={function(e) { updateField('name', e.target.value); }}
                         placeholder="e.g., Butter Chicken, Beef Biryani..."
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                       />
                     </div>
                     <div>
@@ -1338,7 +1308,7 @@
                       <select
                         value={recipe.category}
                         onChange={function(e) { updateField('category', e.target.value); }}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                       >
                         <option value="chicken">Chicken</option>
                         <option value="beef">Beef</option>
@@ -1353,7 +1323,7 @@
                         value={recipe.cookTime}
                         onChange={function(e) { updateField('cookTime', e.target.value); }}
                         placeholder="45 min"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                       />
                     </div>
                   </div>
@@ -1365,7 +1335,7 @@
                       value={recipe.description}
                       onChange={function(e) { updateField('description', e.target.value); }}
                       placeholder="Brief description of the dish..."
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                     />
                   </div>
 
@@ -1380,9 +1350,9 @@
                             <button
                               type="button"
                               onClick={function() { updateField('image', ''); }}
-                              className="absolute inset-0 bg-black/70 dark:bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                              className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
                             >
-                              <svg className="w-6 h-6 text-white dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                           </>
                         ) : (
@@ -1397,7 +1367,7 @@
                           <button
                             type="button"
                             onClick={function() { setShowUrlInput(!showUrlInput); }}
-                            className={"inline-flex items-center gap-2 px-3 py-2 rounded-lg transition-colors " + (showUrlInput ? "bg-blue-100 text-blue-700" : "bg-gray-100 hover:bg-gray-200 text-gray-600 dark:text-neutral-300")}
+                            className={"inline-flex items-center gap-2 px-3 py-2 rounded-lg transition-colors " + (showUrlInput ? "bg-blue-100 text-blue-700" : "bg-gray-100 hover:bg-gray-200 text-gray-600")}
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                             <span className="text-sm">Fetch from URL</span>
@@ -1434,18 +1404,18 @@
                               value={recipe.image || ''}
                               onChange={function(e) { updateField('image', e.target.value); }}
                               placeholder="Paste image URL here..."
-                              className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             <button
                               type="button"
                               onClick={function() { setShowUrlInput(false); }}
-                              className="px-3 py-2 text-gray-500 hover:text-gray-700 dark:text-neutral-200"
+                              className="px-3 py-2 text-gray-500 hover:text-gray-700"
                             >
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                             </button>
                           </div>
                         )}
-                        {!openaiKey && <p className="text-xs text-gray-400 dark:text-neutral-500">Add OpenAI key in Settings for AI image generation</p>}
+                        {!openaiKey && <p className="text-xs text-gray-400">Add OpenAI key in Settings for AI image generation</p>}
                       </div>
                     </div>
                   </div>
@@ -1456,23 +1426,23 @@
                     <div className="grid grid-cols-5 gap-3">
                       <div>
                         <label className="block text-xs text-gray-400 mb-1">Servings</label>
-                        <input type="number" value={recipe.servings} onChange={function(e) { updateField('servings', parseInt(e.target.value) || 1); }} className="w-full px-2 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white text-sm" />
+                        <input type="number" value={recipe.servings} onChange={function(e) { updateField('servings', parseInt(e.target.value) || 1); }} className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm" />
                       </div>
                       <div>
                         <label className="block text-xs text-gray-400 mb-1">Protein (g)</label>
-                        <input type="number" value={recipe.proteinPerServing} onChange={function(e) { updateField('proteinPerServing', parseInt(e.target.value) || 0); }} className="w-full px-2 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white text-sm" />
+                        <input type="number" value={recipe.proteinPerServing} onChange={function(e) { updateField('proteinPerServing', parseInt(e.target.value) || 0); }} className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm" />
                       </div>
                       <div>
                         <label className="block text-xs text-gray-400 mb-1">Calories</label>
-                        <input type="number" value={recipe.caloriesPerServing} onChange={function(e) { updateField('caloriesPerServing', parseInt(e.target.value) || 0); }} className="w-full px-2 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white text-sm" />
+                        <input type="number" value={recipe.caloriesPerServing} onChange={function(e) { updateField('caloriesPerServing', parseInt(e.target.value) || 0); }} className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm" />
                       </div>
                       <div>
                         <label className="block text-xs text-gray-400 mb-1">Carbs (g)</label>
-                        <input type="number" value={recipe.carbsPerServing} onChange={function(e) { updateField('carbsPerServing', parseInt(e.target.value) || 0); }} className="w-full px-2 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white text-sm" />
+                        <input type="number" value={recipe.carbsPerServing} onChange={function(e) { updateField('carbsPerServing', parseInt(e.target.value) || 0); }} className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm" />
                       </div>
                       <div>
                         <label className="block text-xs text-gray-400 mb-1">Fat (g)</label>
-                        <input type="number" value={recipe.fatPerServing} onChange={function(e) { updateField('fatPerServing', parseInt(e.target.value) || 0); }} className="w-full px-2 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white text-sm" />
+                        <input type="number" value={recipe.fatPerServing} onChange={function(e) { updateField('fatPerServing', parseInt(e.target.value) || 0); }} className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm" />
                       </div>
                     </div>
                   </div>
@@ -1486,7 +1456,7 @@
                           return (
                             <div key={i} className="flex gap-2 items-center bg-gray-50 p-2 rounded-lg">
                               <span className="flex-1 text-sm">{ing.item}</span>
-                              <span className="text-sm text-gray-500 dark:text-neutral-400">{ing.amount} {ing.unit}</span>
+                              <span className="text-sm text-gray-500">{ing.amount} {ing.unit}</span>
                               <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200">{ing.store}</span>
                               <button onClick={function() { removeIngredient(i); }} className="text-red-400 hover:text-red-600">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1502,7 +1472,7 @@
                         value={newIngredient.item}
                         onChange={function(e) { setNewIngredient(Object.assign({}, newIngredient, { item: e.target.value })); }}
                         placeholder="Ingredient name"
-                        className="flex-1 px-2 py-2 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white"
+                        className="flex-1 px-2 py-2 text-sm border border-gray-300 rounded-lg"
                         onKeyPress={function(e) { if (e.key === 'Enter') { e.preventDefault(); addIngredient(); } }}
                       />
                       <input
@@ -1510,12 +1480,12 @@
                         value={newIngredient.amount}
                         onChange={function(e) { setNewIngredient(Object.assign({}, newIngredient, { amount: e.target.value })); }}
                         placeholder="Amt"
-                        className="w-16 px-2 py-2 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white"
+                        className="w-16 px-2 py-2 text-sm border border-gray-300 rounded-lg"
                       />
                       <select
                         value={newIngredient.unit}
                         onChange={function(e) { setNewIngredient(Object.assign({}, newIngredient, { unit: e.target.value })); }}
-                        className="w-20 px-2 py-2 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white"
+                        className="w-20 px-2 py-2 text-sm border border-gray-300 rounded-lg"
                       >
                         <option value="g">g</option>
                         <option value="kg">kg</option>
@@ -1530,7 +1500,7 @@
                       <select
                         value={newIngredient.store}
                         onChange={function(e) { setNewIngredient(Object.assign({}, newIngredient, { store: e.target.value })); }}
-                        className="w-24 px-2 py-2 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white"
+                        className="w-24 px-2 py-2 text-sm border border-gray-300 rounded-lg"
                       >
                         <option value="walmart">Walmart</option>
                         <option value="apna">Apna</option>
@@ -1565,7 +1535,7 @@
                         value={newStep}
                         onChange={function(e) { setNewStep(e.target.value); }}
                         placeholder="Add a cooking step..."
-                        className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white"
+                        className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
                         onKeyPress={function(e) { if (e.key === 'Enter') { e.preventDefault(); addStep(); } }}
                       />
                       <button onClick={addStep} className="px-3 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800">
@@ -1582,7 +1552,7 @@
                       onChange={function(e) { updateField('mealPrepNote', e.target.value); }}
                       placeholder="Storage tips, reheating instructions, freezing advice..."
                       rows={2}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
                     />
                   </div>
                 </div>
@@ -1596,7 +1566,7 @@
                   Delete
                 </button>
               )}
-              <button onClick={handleClose} className="flex-1 px-4 py-3 text-gray-700 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white hover:bg-gray-50 dark:bg-neutral-800">
+              <button onClick={handleClose} className="flex-1 px-4 py-3 text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50">
                 Cancel
               </button>
               {mode === 'form' && (
@@ -1637,8 +1607,8 @@
       }
 
       return (
-        <div className="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
             {/* Header Image */}
             <div className="relative h-48 overflow-hidden">
               {recipe.image ? (
@@ -1650,7 +1620,7 @@
                     <button
                       onClick={handleGenerateImage}
                       disabled={generatingImage}
-                      className="px-4 py-2 bg-white/90 hover:bg-white dark:bg-neutral-900 text-gray-700 rounded-lg text-sm font-medium shadow-md flex items-center gap-2 disabled:opacity-50"
+                      className="px-4 py-2 bg-white/90 hover:bg-white text-gray-700 rounded-lg text-sm font-medium shadow-md flex items-center gap-2 disabled:opacity-50"
                     >
                       {generatingImage ? (
                         <>
@@ -1669,17 +1639,17 @@
               )}
               <div className="absolute top-4 right-4 flex gap-2">
                 {onEdit && (
-                  <button onClick={function() { onClose(); onEdit(); }} className="w-10 h-10 bg-white/90 hover:bg-white dark:bg-neutral-900 rounded-full flex items-center justify-center shadow-lg" title={isCustom ? "Edit recipe" : "Edit as custom copy"}>
-                    <svg className="w-5 h-5 text-gray-700 dark:text-neutral-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                  <button onClick={function() { onClose(); onEdit(); }} className="w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg" title={isCustom ? "Edit recipe" : "Edit as custom copy"}>
+                    <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                   </button>
                 )}
-                <button onClick={onClose} className="w-10 h-10 bg-white/90 hover:bg-white dark:bg-neutral-900 rounded-full flex items-center justify-center shadow-lg">
-                  <svg className="w-5 h-5 text-gray-700 dark:text-neutral-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                <button onClick={onClose} className="w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg">
+                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
               {isCustom && (
                 <div className="absolute top-4 left-4">
-                  <span className="text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 px-2 py-1 rounded-full">Custom Recipe</span>
+                  <span className="text-xs font-medium bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Custom Recipe</span>
                 </div>
               )}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
@@ -1690,32 +1660,32 @@
 
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-192px)]">
               {/* Macros */}
-              <div className="grid grid-cols-5 gap-4 mb-6 p-4 bg-gray-50 dark:bg-neutral-800 rounded-xl">
+              <div className="grid grid-cols-5 gap-4 mb-6 p-4 bg-gray-50 rounded-xl">
                 <div className="text-center">
-                  <div className="text-xl font-bold text-gray-900 dark:text-white">{recipe.servings}</div>
-                  <div className="text-xs text-gray-500 dark:text-neutral-400">Servings</div>
+                  <div className="text-xl font-bold text-gray-900">{recipe.servings}</div>
+                  <div className="text-xs text-gray-500">Servings</div>
                 </div>
                 <div className="text-center">
                   <div className="text-xl font-bold text-red-500">{recipe.proteinPerServing}g</div>
-                  <div className="text-xs text-gray-500 dark:text-neutral-400">Protein</div>
+                  <div className="text-xs text-gray-500">Protein</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xl font-bold text-gray-900 dark:text-white">{recipe.caloriesPerServing}</div>
-                  <div className="text-xs text-gray-500 dark:text-neutral-400">Calories</div>
+                  <div className="text-xl font-bold text-gray-900">{recipe.caloriesPerServing}</div>
+                  <div className="text-xs text-gray-500">Calories</div>
                 </div>
                 <div className="text-center">
                   <div className="text-xl font-bold text-amber-500">{recipe.carbsPerServing}g</div>
-                  <div className="text-xs text-gray-500 dark:text-neutral-400">Carbs</div>
+                  <div className="text-xs text-gray-500">Carbs</div>
                 </div>
                 <div className="text-center">
                   <div className="text-xl font-bold text-purple-500">{recipe.fatPerServing}g</div>
-                  <div className="text-xs text-gray-500 dark:text-neutral-400">Fat</div>
+                  <div className="text-xs text-gray-500">Fat</div>
                 </div>
               </div>
 
               {/* Portion Info */}
-              <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
-                <div className="flex items-center gap-2 text-green-800 dark:text-green-400">
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+                <div className="flex items-center gap-2 text-green-800">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   <span className="font-medium">Eat {portions} servings per meal (2 meals/day) = {Math.round(recipe.proteinPerServing * portions * 2)}g protein daily</span>
                 </div>
@@ -1723,16 +1693,16 @@
 
               {/* Ingredients */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-gray-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                   Ingredients
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
                   {recipe.ingredients && recipe.ingredients.map(function(ing, i) {
                     return (
-                      <div key={i} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-neutral-800 rounded-lg">
-                        <span className="text-sm text-gray-700 dark:text-neutral-200">{ing.item}</span>
-                        <span className="text-sm text-gray-500 dark:text-neutral-400">{ing.amount} {ing.unit}</span>
+                      <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                        <span className="text-sm text-gray-700">{ing.item}</span>
+                        <span className="text-sm text-gray-500">{ing.amount} {ing.unit}</span>
                       </div>
                     );
                   })}
@@ -1742,16 +1712,16 @@
               {/* Method */}
               {recipe.method && (
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-gray-500 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                     Method
                   </h3>
                   <ol className="space-y-3">
                     {recipe.method.map(function(step, i) {
                       return (
                         <li key={i} className="flex gap-3">
-                          <span className="flex-shrink-0 w-6 h-6 bg-gray-900 dark:bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-medium">{i + 1}</span>
-                          <span className="text-sm text-gray-700 dark:text-neutral-300 pt-0.5">{step}</span>
+                          <span className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-medium">{i + 1}</span>
+                          <span className="text-sm text-gray-700 pt-0.5">{step}</span>
                         </li>
                       );
                     })}
@@ -1761,12 +1731,12 @@
 
               {/* Meal Prep Note */}
               {recipe.mealPrepNote && (
-                <div className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+                <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
                   <div className="flex items-start gap-2">
-                    <svg className="w-5 h-5 text-amber-600 dark:text-amber-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <svg className="w-5 h-5 text-amber-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <div>
-                      <span className="font-medium text-amber-800 dark:text-amber-400">Meal Prep Tip: </span>
-                      <span className="text-sm text-amber-700 dark:text-amber-300">{recipe.mealPrepNote}</span>
+                      <span className="font-medium text-amber-800">Meal Prep Tip: </span>
+                      <span className="text-sm text-amber-700">{recipe.mealPrepNote}</span>
                     </div>
                   </div>
                 </div>
@@ -1775,8 +1745,8 @@
 
             {/* Footer */}
             {showSelectButton && (
-              <div className="p-4 border-t border-gray-200 dark:border-neutral-800">
-                <button onClick={onSelect} className="w-full py-3 bg-gray-900 dark:bg-red-600 text-white rounded-xl font-medium hover:bg-gray-800 dark:hover:bg-red-700">
+              <div className="p-4 border-t border-gray-200">
+                <button onClick={onSelect} className="w-full py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800">
                   Select This Recipe
                 </button>
               </div>
@@ -1796,15 +1766,15 @@
       if (!breakfast) return null;
 
       return (
-        <div className="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
             {/* Header */}
             <div className="p-6 bg-gradient-to-r from-orange-500 to-amber-500">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="text-4xl">{breakfast.emoji || '🍳'}</span>
                   <div>
-                    <h2 className="text-xl font-bold text-white dark:text-white">{breakfast.name}</h2>
+                    <h2 className="text-xl font-bold text-white">{breakfast.name}</h2>
                     <div className="flex items-center gap-3 text-orange-100 text-sm mt-1">
                       <span>{breakfast.protein}g protein</span>
                       <span>•</span>
@@ -1813,7 +1783,7 @@
                   </div>
                 </div>
                 <button onClick={onClose} className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
             </div>
@@ -1850,14 +1820,14 @@
               )}
 
               {/* Store */}
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-neutral-400">
+              <div className="flex items-center gap-2 text-sm text-gray-500">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                Buy at: <span className="font-medium text-gray-700 dark:text-neutral-200">{breakfast.store === 'apna' ? 'Apna Bazaar' : 'Walmart'}</span>
+                Buy at: <span className="font-medium text-gray-700">{breakfast.store === 'apna' ? 'Apna Bazaar' : 'Walmart'}</span>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-gray-200 dark:border-neutral-800">
+            <div className="p-4 border-t border-gray-200">
               <button
                 onClick={onToggleSelect}
                 className={isSelected
@@ -1910,18 +1880,18 @@
       });
 
       return (
-        <div className="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-lg max-h-[85vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[85vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
             {/* Header */}
-            <div className="p-4 md:p-6 border-b border-gray-200 dark:border-neutral-800">
+            <div className="p-4 md:p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg md:text-xl font-bold text-gray-900 serif">{dayName}</h2>
-                  <p className="text-sm text-gray-500 dark:text-neutral-400">{dateStr}</p>
+                  <p className="text-sm text-gray-500">{dateStr}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  {isCookDay && <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-1 rounded-full font-medium">Cook Day</span>}
-                  <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:text-neutral-300">
+                  {isCookDay && <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-medium">Cook Day</span>}
+                  <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
                 </div>
@@ -1941,9 +1911,9 @@
                   <div className="flex gap-4 p-4 bg-gray-50 rounded-xl">
                     <img src={recipe.image} alt={recipe.name} className="w-16 md:w-20 h-16 md:h-20 rounded-lg object-cover" />
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900 dark:text-white dark:text-white">{recipe.name}</h3>
+                      <h3 className="font-medium text-gray-900">{recipe.name}</h3>
                       <p className="text-sm text-gray-500 mt-1 line-clamp-2">{recipe.description}</p>
-                      <div className="flex gap-3 mt-2 text-xs text-gray-600 dark:text-neutral-300">
+                      <div className="flex gap-3 mt-2 text-xs text-gray-600">
                         <span>{recipe.proteinPerServing}g protein</span>
                         <span>{recipe.caloriesPerServing} cal</span>
                       </div>
@@ -1953,7 +1923,7 @@
                   <div className="flex gap-3">
                     <button
                       onClick={function() { setShowPicker(true); setSearch(''); }}
-                      className="flex-1 px-4 py-3 text-gray-700 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white hover:bg-gray-50 flex items-center justify-center gap-2 text-sm"
+                      className="flex-1 px-4 py-3 text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 flex items-center justify-center gap-2 text-sm"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
                       Change
@@ -1971,14 +1941,14 @@
                 <div className="space-y-4">
                   {/* Search */}
                   <div className="relative">
-                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     <input
                       type="text"
                       placeholder="Search recipes..."
                       value={search}
                       onChange={function(e) { setSearch(e.target.value); }}
                       autoFocus
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900"
                     />
                   </div>
 
@@ -1994,9 +1964,9 @@
                           <img src={r.image} alt="" className="w-12 h-12 rounded-lg object-cover" />
                           <div className="flex-1 min-w-0">
                             <div className="font-medium text-gray-900 text-sm truncate">{r.name}</div>
-                            <div className="text-xs text-gray-500 dark:text-neutral-400">{r.proteinPerServing}g P • {r.caloriesPerServing} cal</div>
+                            <div className="text-xs text-gray-500">{r.proteinPerServing}g P • {r.caloriesPerServing} cal</div>
                           </div>
-                          <svg className="w-5 h-5 text-gray-300 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                          <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                         </button>
                       );
                     })}
@@ -2009,7 +1979,7 @@
                   {recipe && showPicker && (
                     <button
                       onClick={function() { setShowPicker(false); }}
-                      className="w-full py-2 text-sm text-gray-500 hover:text-gray-700 dark:text-neutral-200"
+                      className="w-full py-2 text-sm text-gray-500 hover:text-gray-700"
                     >
                       Cancel
                     </button>
@@ -2166,16 +2136,16 @@
       ];
 
       return (
-        <div className="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
             {/* Header */}
             <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-green-500 to-emerald-600">
-              <div className="flex items-center justify-between text-white dark:text-white">
+              <div className="flex items-center justify-between text-white">
                 <div>
                   <h2 className="text-lg font-bold">{dayName}, {dateStr}</h2>
                   <p className="text-green-100 text-sm">Log what you actually ate</p>
                 </div>
-                <button onClick={onClose} className="text-white/80 hover:text-white dark:text-white">
+                <button onClick={onClose} className="text-white/80 hover:text-white">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
@@ -2201,23 +2171,23 @@
             </div>
 
             <div className="p-4 overflow-y-auto max-h-[calc(90vh-280px)]">
-              {error && <p className="text-red-500 text-sm mb-3 p-2 bg-red-50 dark:bg-red-900/30 rounded-lg">{error}</p>}
+              {error && <p className="text-red-500 text-sm mb-3 p-2 bg-red-50 rounded-lg">{error}</p>}
 
               {/* Logged Items */}
               {dayLog.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400 mb-2">Today's Log</h3>
+                  <h3 className="text-sm font-medium text-gray-500 mb-2">Today's Log</h3>
                   <div className="space-y-2">
                     {dayLog.map(function(entry) {
                       return (
-                        <div key={entry.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-neutral-800 rounded-lg">
+                        <div key={entry.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                           <div className="flex-1">
-                            <div className="font-medium text-gray-900 dark:text-white text-sm">{entry.name}</div>
-                            <div className="text-xs text-gray-500 dark:text-neutral-400">
+                            <div className="font-medium text-gray-900 text-sm">{entry.name}</div>
+                            <div className="text-xs text-gray-500">
                               {entry.protein}g P • {entry.calories} cal • {entry.time}
                             </div>
                           </div>
-                          <button onClick={function() { onRemoveEntry(entry.id); }} className="text-gray-400 dark:text-neutral-500 hover:text-red-500 p-1">
+                          <button onClick={function() { onRemoveEntry(entry.id); }} className="text-gray-400 hover:text-red-500 p-1">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                           </button>
                         </div>
@@ -2230,30 +2200,30 @@
               {/* Suggested from Plan */}
               {plannedRecipe && !dayLog.find(function(e) { return e.name === plannedRecipe.name; }) && (
                 <div className="mb-4">
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400 mb-2">Planned Meal</h3>
+                  <h3 className="text-sm font-medium text-gray-500 mb-2">Planned Meal</h3>
                   <button
                     onClick={function() { addFromRecipe(plannedRecipe); }}
-                    className="w-full flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 text-left"
+                    className="w-full flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 text-left"
                   >
                     <img src={plannedRecipe.image} alt="" className="w-12 h-12 rounded-lg object-cover" />
                     <div className="flex-1">
-                      <div className="font-medium text-blue-900 dark:text-blue-300">{plannedRecipe.name}</div>
-                      <div className="text-xs text-blue-600 dark:text-blue-400">{plannedRecipe.proteinPerServing}g protein per serving</div>
+                      <div className="font-medium text-blue-900">{plannedRecipe.name}</div>
+                      <div className="text-xs text-blue-600">{plannedRecipe.proteinPerServing}g protein per serving</div>
                     </div>
-                    <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">+ Add</span>
+                    <span className="text-blue-600 text-sm font-medium">+ Add</span>
                   </button>
                 </div>
               )}
 
               {/* Mode Tabs */}
-              <div className="flex gap-1 p-1 bg-gray-100 dark:bg-neutral-800 rounded-lg mb-4">
-                <button onClick={function() { setMode('quick'); }} className={mode === 'quick' ? "flex-1 py-2 text-sm font-medium bg-white dark:bg-red-600 text-gray-900 dark:text-white rounded-md shadow-sm dark:shadow-none" : "flex-1 py-2 text-sm text-gray-600 dark:text-neutral-400"}>
+              <div className="flex gap-1 p-1 bg-gray-100 rounded-lg mb-4">
+                <button onClick={function() { setMode('quick'); }} className={mode === 'quick' ? "flex-1 py-2 text-sm font-medium bg-white rounded-md shadow-sm" : "flex-1 py-2 text-sm text-gray-600"}>
                   Quick Add
                 </button>
-                <button onClick={function() { setMode('library'); }} className={mode === 'library' ? "flex-1 py-2 text-sm font-medium bg-white dark:bg-red-600 text-gray-900 dark:text-white rounded-md shadow-sm dark:shadow-none" : "flex-1 py-2 text-sm text-gray-600 dark:text-neutral-400"}>
+                <button onClick={function() { setMode('library'); }} className={mode === 'library' ? "flex-1 py-2 text-sm font-medium bg-white rounded-md shadow-sm" : "flex-1 py-2 text-sm text-gray-600"}>
                   From Recipes
                 </button>
-                <button onClick={function() { setMode('ai'); }} className={mode === 'ai' ? "flex-1 py-2 text-sm font-medium bg-white dark:bg-red-600 text-gray-900 dark:text-white rounded-md shadow-sm dark:shadow-none" : "flex-1 py-2 text-sm text-gray-600 dark:text-neutral-400"}>
+                <button onClick={function() { setMode('ai'); }} className={mode === 'ai' ? "flex-1 py-2 text-sm font-medium bg-white rounded-md shadow-sm" : "flex-1 py-2 text-sm text-gray-600"}>
                   AI Parse
                 </button>
               </div>
@@ -2266,10 +2236,10 @@
                       <button
                         key={item.name}
                         onClick={function() { addQuickItem(item); }}
-                        className="p-3 text-left bg-gray-50 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-lg"
+                        className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg"
                       >
-                        <div className="font-medium text-gray-900 dark:text-white text-sm">{item.name}</div>
-                        <div className="text-xs text-gray-500 dark:text-neutral-400">{item.protein}g P • {item.calories} cal</div>
+                        <div className="font-medium text-gray-900 text-sm">{item.name}</div>
+                        <div className="text-xs text-gray-500">{item.protein}g P • {item.calories} cal</div>
                       </button>
                     );
                   })}
@@ -2281,13 +2251,13 @@
                 <div className="space-y-3">
                   {/* Search Input */}
                   <div className="relative">
-                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     <input
                       type="text"
                       value={librarySearch}
                       onChange={function(e) { setLibrarySearch(e.target.value); }}
                       placeholder="Search recipes..."
-                      className="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   {/* Recipe List */}
@@ -2304,9 +2274,9 @@
                           <img src={recipe.image} alt="" className="w-10 h-10 rounded-lg object-cover" />
                           <div className="flex-1">
                             <div className="font-medium text-gray-900 text-sm">{recipe.name}</div>
-                            <div className="text-xs text-gray-500 dark:text-neutral-400">{recipe.proteinPerServing}g P • {recipe.caloriesPerServing} cal/serving</div>
+                            <div className="text-xs text-gray-500">{recipe.proteinPerServing}g P • {recipe.caloriesPerServing} cal/serving</div>
                           </div>
-                          <span className="text-gray-400 dark:text-neutral-500">+</span>
+                          <span className="text-gray-400">+</span>
                         </button>
                       );
                     })}
@@ -2322,12 +2292,12 @@
               {/* AI Parse */}
               {mode === 'ai' && (
                 <div className="space-y-3">
-                  <p className="text-sm text-gray-500 dark:text-neutral-400">Describe what you ate, or paste nutrition info from a label.</p>
+                  <p className="text-sm text-gray-500">Describe what you ate, or paste nutrition info from a label.</p>
                   <textarea
                     value={aiText}
                     onChange={function(e) { setAiText(e.target.value); }}
                     placeholder="e.g., 'Chicken biryani with raita' or '2 eggs with toast and butter' or paste label info..."
-                    className="w-full h-24 px-3 py-2 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full h-24 px-3 py-2 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                   <button
                     onClick={parseWithAI}
@@ -2373,32 +2343,32 @@
       });
 
       return (
-        <div className="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
             {/* Header */}
             <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-800 to-gray-900">
-              <div className="flex items-center justify-between text-white dark:text-white">
+              <div className="flex items-center justify-between text-white">
                 <div>
                   <h2 className="text-lg font-bold">Select Recipe</h2>
                   <p className="text-gray-300 text-sm">{slotLabel}</p>
                 </div>
-                <button onClick={onClose} className="text-white/80 hover:text-white dark:text-white">
+                <button onClick={onClose} className="text-white/80 hover:text-white">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
             </div>
 
             {/* Search */}
-            <div className="p-4 border-b border-gray-100 dark:border-neutral-800">
+            <div className="p-4 border-b border-gray-100">
               <div className="relative">
-                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 <input
                   type="text"
                   placeholder="Search recipes..."
                   value={search}
                   onChange={function(e) { setSearch(e.target.value); }}
                   autoFocus
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-red-500"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                 />
               </div>
               {/* Category filters */}
@@ -2415,7 +2385,7 @@
                       key={cat.id}
                       onClick={function() { setCategory(cat.id); }}
                       className={category === cat.id
-                        ? "px-3 py-1.5 rounded-full text-xs font-medium bg-gray-900 text-white dark:text-white"
+                        ? "px-3 py-1.5 rounded-full text-xs font-medium bg-gray-900 text-white"
                         : "px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200"
                       }
                     >
@@ -2445,7 +2415,7 @@
                           <div className="text-xs text-gray-500 mt-0.5">{recipe.proteinPerServing}g protein • {recipe.caloriesPerServing} cal</div>
                           <div className="text-xs text-gray-400 mt-0.5">{recipe.cookTime}</div>
                         </div>
-                        <svg className="w-5 h-5 text-gray-300 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                        <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                       </button>
                     );
                   })}
@@ -2499,11 +2469,11 @@
                 style={{ transition: 'stroke-dashoffset 0.5s ease' }} />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-lg font-bold text-gray-900 dark:text-white dark:text-white">{value}</span>
+              <span className="text-lg font-bold text-gray-900">{value}</span>
             </div>
           </div>
           <span className="mt-2 text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</span>
-          <span className="text-xs text-gray-400 dark:text-neutral-500">of {target}</span>
+          <span className="text-xs text-gray-400">of {target}</span>
         </div>
       );
     }
@@ -2532,26 +2502,26 @@
 
       return (
         <div onClick={handleClick} className={"relative cursor-pointer " + (recipe
-          ? "text-left p-4 rounded-xl border-2 bg-white dark:bg-neutral-800 border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600 transition-all"
-          : "text-left p-4 rounded-xl border-2 bg-gray-50 dark:bg-neutral-800 border-dashed border-gray-300 dark:border-neutral-600 hover:border-gray-400 dark:hover:border-neutral-500 transition-all"
+          ? "text-left p-4 rounded-xl border-2 bg-white border-gray-200 hover:border-gray-300 transition-all"
+          : "text-left p-4 rounded-xl border-2 bg-gray-50 border-dashed border-gray-300 hover:border-gray-400 transition-all"
         )}>
           {recipe && (
-            <button onClick={handleClear} className="absolute top-2 right-2 w-6 h-6 bg-gray-100 dark:bg-neutral-700 hover:bg-red-100 dark:hover:bg-red-900 text-gray-400 dark:text-neutral-400 hover:text-red-500 rounded-full flex items-center justify-center transition-colors">
+            <button onClick={handleClear} className="absolute top-2 right-2 w-6 h-6 bg-gray-100 hover:bg-red-100 text-gray-400 hover:text-red-500 rounded-full flex items-center justify-center transition-colors">
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           )}
-          <div className="text-xs font-semibold text-gray-400 dark:text-neutral-500 uppercase tracking-wider">{label}</div>
-          <div className="text-xs text-gray-400 dark:text-neutral-500 mb-2">{dates}</div>
+          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{label}</div>
+          <div className="text-xs text-gray-400 mb-2">{dates}</div>
           {recipe ? (
             <div className="flex items-center gap-3">
               <img src={recipe.image} alt={recipe.name} className="w-12 h-12 rounded-lg object-cover" />
               <div>
-                <div className="font-medium text-gray-900 dark:text-white text-sm">{recipe.name}</div>
-                <div className="text-xs text-gray-500 dark:text-neutral-400">{recipe.proteinPerServing}g protein</div>
+                <div className="font-medium text-gray-900 text-sm">{recipe.name}</div>
+                <div className="text-xs text-gray-500">{recipe.proteinPerServing}g protein</div>
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-2 text-gray-400 dark:text-neutral-500 mt-2">
+            <div className="flex items-center gap-2 text-gray-400 mt-2">
               <span className="text-lg">+</span>
               <span className="text-sm">Select recipe</span>
             </div>
@@ -2595,21 +2565,21 @@
       }
 
       return (
-        <div onClick={onSelect} className={"bg-white dark:bg-neutral-900 dark:bg-neutral-900 rounded-2xl border overflow-hidden cursor-pointer hover:shadow-lg transition-all relative " + (isSelecting ? "border-green-400 dark:border-red-500 ring-2 ring-green-200 dark:ring-red-900" : "border-gray-200 dark:border-neutral-800 hover:border-gray-400 dark:hover:border-neutral-600")}>
+        <div onClick={onSelect} className={"bg-white rounded-2xl border overflow-hidden cursor-pointer hover:shadow-lg transition-all relative " + (isSelecting ? "border-green-400 ring-2 ring-green-200" : "border-gray-200 hover:border-gray-400")}>
           {isCustom && (
             <div className="absolute top-3 left-3 z-10 flex gap-2">
-              <span className="text-xs font-medium bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-full">Custom</span>
+              <span className="text-xs font-medium bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Custom</span>
               {isIncomplete && (
-                <span className="text-xs font-medium bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 px-2 py-1 rounded-full">Needs Details</span>
+                <span className="text-xs font-medium bg-amber-100 text-amber-700 px-2 py-1 rounded-full">Needs Details</span>
               )}
             </div>
           )}
           <div className="absolute top-3 right-3 z-10 flex gap-1">
-            <button onClick={handleEdit} className="w-8 h-8 bg-white/90 dark:bg-neutral-800/90 hover:bg-white dark:bg-neutral-900 dark:hover:bg-neutral-700 rounded-full flex items-center justify-center shadow-md" title="Edit recipe">
-              <svg className="w-4 h-4 text-gray-600 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+            <button onClick={handleEdit} className="w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md" title="Edit recipe">
+              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
             </button>
             {isCustom && (
-              <button onClick={handleDelete} className="w-8 h-8 bg-white/90 dark:bg-neutral-800/90 hover:bg-red-100 dark:hover:bg-red-900 rounded-full flex items-center justify-center shadow-md" title="Delete recipe">
+              <button onClick={handleDelete} className="w-8 h-8 bg-white/90 hover:bg-red-100 rounded-full flex items-center justify-center shadow-md" title="Delete recipe">
                 <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
               </button>
             )}
@@ -2618,7 +2588,7 @@
             {recipe.image ? (
               <img src={recipe.image} alt={recipe.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-orange-100 to-red-100 dark:from-neutral-800 dark:to-neutral-900 flex items-center justify-center flex-col gap-2 hover:scale-105 transition-transform duration-500">
+              <div className="w-full h-full bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center flex-col gap-2 hover:scale-105 transition-transform duration-500">
                 <span className="text-5xl">{recipe.emoji || '🍽️'}</span>
                 {canGenerateImage && !generatingImage && (
                   <button
@@ -2628,14 +2598,14 @@
                       if (onGenerateImage) onGenerateImage();
                       setTimeout(function() { setGeneratingImage(false); }, 20000);
                     }}
-                    className="px-3 py-1.5 bg-white/90 dark:bg-neutral-800/90 hover:bg-white dark:bg-neutral-900 dark:hover:bg-neutral-700 text-gray-700 dark:text-neutral-200 rounded-lg text-xs font-medium shadow-md flex items-center gap-1"
+                    className="px-3 py-1.5 bg-white/90 hover:bg-white text-gray-700 rounded-lg text-xs font-medium shadow-md flex items-center gap-1"
                   >
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                     Generate Image
                   </button>
                 )}
                 {generatingImage && (
-                  <div className="px-3 py-1.5 bg-white/90 dark:bg-neutral-800/90 text-gray-700 dark:text-neutral-200 rounded-lg text-xs font-medium shadow-md flex items-center gap-1">
+                  <div className="px-3 py-1.5 bg-white/90 text-gray-700 rounded-lg text-xs font-medium shadow-md flex items-center gap-1">
                     <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                     Generating...
                   </div>
@@ -2645,29 +2615,29 @@
           </div>
           <div className="p-5">
             <div className="flex items-start justify-between mb-2">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white serif">{recipe.name}</h3>
-              <span className="text-xs text-gray-400 dark:text-neutral-500 bg-gray-100 dark:bg-neutral-800 px-2 py-1 rounded-full">{recipe.cookTime}</span>
+              <h3 className="text-lg font-medium text-gray-900 serif">{recipe.name}</h3>
+              <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">{recipe.cookTime}</span>
             </div>
-            <p className="text-sm text-gray-500 dark:text-neutral-400 mb-4">{recipe.description || 'No description yet'}</p>
-            <div className="pt-4 border-t border-gray-100 dark:border-neutral-800">
+            <p className="text-sm text-gray-500 mb-4">{recipe.description || 'No description yet'}</p>
+            <div className="pt-4 border-t border-gray-100">
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center">
-                  <div className="text-xl font-bold text-gray-900 dark:text-white dark:text-white">{dailyProtein}g</div>
-                  <div className="text-xs text-gray-400 dark:text-neutral-500">Protein/day</div>
+                  <div className="text-xl font-bold text-gray-900">{dailyProtein}g</div>
+                  <div className="text-xs text-gray-400">Protein/day</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xl font-bold text-gray-900 dark:text-white dark:text-white">{dailyCals}</div>
-                  <div className="text-xs text-gray-400 dark:text-neutral-500">Calories/day</div>
+                  <div className="text-xl font-bold text-gray-900">{dailyCals}</div>
+                  <div className="text-xs text-gray-400">Calories/day</div>
                 </div>
               </div>
             </div>
             {isSelecting ? (
-              <button onClick={handleQuickSelect} className="w-full mt-4 bg-green-600 dark:bg-red-600 text-white py-3 rounded-xl font-medium hover:bg-green-700 dark:hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
+              <button onClick={handleQuickSelect} className="w-full mt-4 bg-green-600 text-white py-3 rounded-xl font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 Select This Recipe
               </button>
             ) : (
-              <button className="w-full mt-4 bg-gray-900 dark:bg-neutral-700 text-white py-3 rounded-xl font-medium hover:bg-gray-800 dark:hover:bg-neutral-600 transition-colors">
+              <button className="w-full mt-4 bg-gray-900 text-white py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors">
                 View Details
               </button>
             )}
@@ -2806,32 +2776,13 @@
       var currentMonth = today.getMonth();
       var currentYear = today.getFullYear();
 
-      // PIN Lock State - remembers unlock in localStorage
+      // PIN Lock State - hardcoded PIN for access
       var DEFAULT_PIN = '20046';
-      var [isUnlocked, setIsUnlocked] = useState(function() {
-        return localStorage.getItem('mealprep-unlocked') === 'true';
-      });
+      var [isUnlocked, setIsUnlocked] = useState(false);
 
       function handleUnlock() {
-        localStorage.setItem('mealprep-unlocked', 'true');
         setIsUnlocked(true);
       }
-
-      // Dark Mode
-      var [darkMode, setDarkMode] = useState(function() {
-        var saved = localStorage.getItem('mealprep-dark-mode');
-        if (saved !== null) return saved === 'true';
-        return window.matchMedia('(prefers-color-scheme: dark)').matches;
-      });
-
-      useEffect(function() {
-        if (darkMode) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-        localStorage.setItem('mealprep-dark-mode', darkMode.toString());
-      }, [darkMode]);
 
       // Main section: 'mealprep' or 'tracker'
       var [mainSection, setMainSection] = useState('mealprep');
@@ -2875,14 +2826,10 @@
       var [showImport, setShowImport] = useState(false);
       var [showAddRecipe, setShowAddRecipe] = useState(false);
       var [editingRecipe, setEditingRecipe] = useState(null);
+      var [tempApiKey, setTempApiKey] = useState('');
       var [claudeApiKey, setClaudeApiKey] = useLocalStorage('mealprep-claude-key', '');
       var [openaiApiKey, setOpenaiApiKey] = useLocalStorage('mealprep-openai-key', '');
-      var [tempApiKey, setTempApiKey] = useState(function() {
-        try { return JSON.parse(localStorage.getItem('mealprep-claude-key')) || ''; } catch(e) { return ''; }
-      });
-      var [tempOpenaiKey, setTempOpenaiKey] = useState(function() {
-        try { return JSON.parse(localStorage.getItem('mealprep-openai-key')) || ''; } catch(e) { return ''; }
-      });
+      var [tempOpenaiKey, setTempOpenaiKey] = useState('');
       var [selectedModel, setSelectedModel] = useLocalStorage('mealprep-ai-model', 'claude-3-haiku-20240307');
       var [addingRecipeAI, setAddingRecipeAI] = useState(false);
       var [customRecipes, setCustomRecipes] = useLocalStorage('mealprep-custom-recipes', []);
@@ -2901,7 +2848,7 @@
         }
       }, []);
 
-      // Push data to JSONbin.io
+      // Push data to JSONbin.io - MERGES with cloud data instead of overwriting
       function pushToCloud() {
         var jsonbinKey = localStorage.getItem('mealprep-jsonbin-key');
         var jsonbinId = localStorage.getItem('mealprep-jsonbin-id');
@@ -2913,26 +2860,71 @@
 
         setSyncStatus('syncing');
 
-        var data = { updated: new Date().toISOString() };
-        SYNC_KEYS.forEach(function(key) {
-          var val = localStorage.getItem(key);
-          if (val) {
-            try { data[key] = JSON.parse(val); } catch (e) {}
-          }
-        });
+        // First, fetch existing cloud data to merge with
+        fetch('https://api.jsonbin.io/v3/b/' + jsonbinId + '/latest', {
+          method: 'GET',
+          headers: { 'X-Master-Key': jsonbinKey }
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(cloudResult) {
+          var cloudData = cloudResult.record || {};
+          var localData = { updated: new Date().toISOString() };
 
-        fetch('https://api.jsonbin.io/v3/b/' + jsonbinId, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Master-Key': jsonbinKey
-          },
-          body: JSON.stringify(data)
+          // Get local data
+          SYNC_KEYS.forEach(function(key) {
+            var val = localStorage.getItem(key);
+            if (val) {
+              try { localData[key] = JSON.parse(val); } catch (e) {}
+            }
+          });
+
+          // Merge: combine arrays (recipes, etc.) instead of replacing
+          var mergedData = { updated: localData.updated };
+
+          SYNC_KEYS.forEach(function(key) {
+            var cloudVal = cloudData[key];
+            var localVal = localData[key];
+
+            if (Array.isArray(localVal) && Array.isArray(cloudVal)) {
+              // Merge arrays by ID, local wins for conflicts
+              var merged = cloudVal.slice();
+              localVal.forEach(function(localItem) {
+                var existingIndex = merged.findIndex(function(m) {
+                  return m.id === localItem.id;
+                });
+                if (existingIndex >= 0) {
+                  merged[existingIndex] = localItem; // Local wins
+                } else {
+                  merged.push(localItem); // Add new item
+                }
+              });
+              mergedData[key] = merged;
+            } else if (typeof localVal === 'object' && typeof cloudVal === 'object' && !Array.isArray(localVal)) {
+              // Merge objects
+              mergedData[key] = Object.assign({}, cloudVal, localVal);
+            } else if (localVal !== undefined) {
+              // Use local value
+              mergedData[key] = localVal;
+            } else if (cloudVal !== undefined) {
+              // Keep cloud value if no local
+              mergedData[key] = cloudVal;
+            }
+          });
+
+          // Push merged data
+          return fetch('https://api.jsonbin.io/v3/b/' + jsonbinId, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Master-Key': jsonbinKey
+            },
+            body: JSON.stringify(mergedData)
+          });
         })
         .then(function(res) { return res.json(); })
         .then(function(result) {
           if (result.metadata) {
-            console.log('Data pushed to JSONbin');
+            console.log('Data merged and pushed to JSONbin');
             setSyncStatus('connected');
             alert('Data synced to cloud!');
           } else {
@@ -3142,7 +3134,6 @@
 
       function openSettings() {
         setTempApiKey(claudeApiKey);
-        setTempOpenaiKey(openaiApiKey);
         setShowSettings(true);
       }
 
@@ -3902,7 +3893,7 @@
       }
 
       return (
-        <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
+        <div className="min-h-screen bg-gray-50">
           {/* Modals */}
           <SettingsModal
             isOpen={showSettings}
@@ -4022,25 +4013,22 @@
           />
 
           {/* Header */}
-          <header className="bg-white dark:bg-neutral-900 dark:bg-neutral-900 border-b border-gray-200 dark:border-neutral-800 sticky top-0 z-40">
+          <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
             <div className="max-w-6xl mx-auto px-3 md:px-6 py-2 md:py-3">
               {/* Top row: Logo on left, Toggle + Actions on right */}
               <div className="flex items-center justify-between">
-                <h1 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white serif flex items-center gap-2">
-                  <span>🍽️</span>
-                  Meal Prep Pro
-                </h1>
+                <h1 className="text-lg md:text-2xl font-bold text-gray-900 serif">Meal Prep Pro</h1>
                 <div className="flex items-center gap-2 md:gap-3">
                   {/* Main Section Toggle */}
-                  <div className="flex gap-0.5 bg-gray-900 dark:bg-neutral-800 p-0.5 md:p-1 rounded-lg">
+                  <div className="flex gap-0.5 bg-gray-900 p-0.5 md:p-1 rounded-lg">
                     <button
                       onClick={function() { setMainSection('mealprep'); }}
-                      className={mainSection === 'mealprep' ? "px-2 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium bg-white dark:bg-neutral-900 dark:bg-red-600 text-gray-900 dark:text-white dark:text-white" : "px-2 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium text-gray-300 hover:text-white dark:text-white"}>
+                      className={mainSection === 'mealprep' ? "px-2 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium bg-white text-gray-900" : "px-2 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium text-gray-300 hover:text-white"}>
                       Meal Prep
                     </button>
                     <button
                       onClick={function() { setMainSection('tracker'); }}
-                      className={mainSection === 'tracker' ? "px-2 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium bg-white dark:bg-neutral-900 dark:bg-red-600 text-gray-900 dark:text-white dark:text-white" : "px-2 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium text-gray-300 hover:text-white dark:text-white"}>
+                      className={mainSection === 'tracker' ? "px-2 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium bg-white text-gray-900" : "px-2 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium text-gray-300 hover:text-white"}>
                       Tracker
                     </button>
                   </div>
@@ -4048,41 +4036,33 @@
                   {syncStatus !== 'disconnected' && (
                     <button
                       onClick={pushToCloud}
-                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors"
-                      title={syncStatus === 'syncing' ? 'Syncing...' : 'Synced - click to push'}
+                      className={"p-2 rounded-lg flex items-center gap-1 " + (syncStatus === 'syncing' ? 'text-yellow-500' : 'text-green-500 hover:bg-green-50')}
+                      title={syncStatus === 'syncing' ? 'Syncing...' : 'Cloud synced - click to push'}
                     >
-                      <div className={"w-2.5 h-2.5 rounded-full " + (syncStatus === 'syncing' ? 'bg-amber-400 sync-active' : 'bg-emerald-500')}></div>
+                      <div className={"w-2 h-2 rounded-full " + (syncStatus === 'syncing' ? 'bg-yellow-500 animate-pulse' : 'bg-green-500')}></div>
+                      <svg className={"w-4 h-4 " + (syncStatus === 'syncing' ? 'animate-spin' : '')} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
                     </button>
                   )}
-                  {/* Dark Mode Toggle */}
-                  <button 
-                    onClick={function() { setDarkMode(!darkMode); }}
-                    className="p-2 text-gray-400 hover:text-gray-600 dark:text-neutral-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
-                  >
-                    {darkMode ? (
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" /></svg>
-                    ) : (
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" /></svg>
-                    )}
-                  </button>
-                  <button onClick={openSettings} className="p-2 text-gray-400 hover:text-gray-600 dark:text-neutral-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-lg transition-colors">
+                  <button onClick={openSettings} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                   </button>
                 </div>
               </div>
               {/* Sub-navigation for Meal Prep section - separate row on mobile */}
               {mainSection === 'mealprep' && (
-                <div className="flex gap-0.5 md:gap-1 bg-gray-100 dark:bg-neutral-800 p-0.5 md:p-1 rounded-lg mt-2 overflow-x-auto">
+                <div className="flex gap-0.5 md:gap-1 bg-gray-100 p-0.5 md:p-1 rounded-lg mt-2 overflow-x-auto">
                   <button onClick={function() { setMealPrepView('plan'); setSelectedSlot(null); }}
-                    className={mealPrepView === 'plan' ? "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium bg-white dark:bg-red-600 text-gray-900 dark:text-white shadow-sm dark:shadow-none whitespace-nowrap" : "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white whitespace-nowrap"}>
+                    className={mealPrepView === 'plan' ? "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium bg-white text-gray-900 shadow-sm whitespace-nowrap" : "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium text-gray-600 hover:text-gray-900 whitespace-nowrap"}>
                     Plan
                   </button>
                   <button onClick={function() { setMealPrepView('recipes'); setSelectedSlot(null); }}
-                    className={mealPrepView === 'recipes' ? "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium bg-white dark:bg-red-600 text-gray-900 dark:text-white shadow-sm dark:shadow-none whitespace-nowrap" : "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white whitespace-nowrap"}>
+                    className={mealPrepView === 'recipes' ? "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium bg-white text-gray-900 shadow-sm whitespace-nowrap" : "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium text-gray-600 hover:text-gray-900 whitespace-nowrap"}>
                     Recipes
                   </button>
                   <button onClick={function() { setMealPrepView('groceries'); setSelectedSlot(null); }}
-                    className={(mealPrepView === 'groceries' || mealPrepView === 'pantry') ? "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium bg-white dark:bg-red-600 text-gray-900 dark:text-white shadow-sm dark:shadow-none whitespace-nowrap" : "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white whitespace-nowrap"}>
+                    className={(mealPrepView === 'groceries' || mealPrepView === 'pantry') ? "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium bg-white text-gray-900 shadow-sm whitespace-nowrap" : "px-3 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium text-gray-600 hover:text-gray-900 whitespace-nowrap"}>
                     Shopping List
                   </button>
                 </div>
@@ -4098,8 +4078,8 @@
               return (
               <div className="space-y-8">
                 {/* Daily Targets with Progress Circles - Based on ACTUAL intake */}
-                <div className="bg-white dark:bg-neutral-900 dark:bg-neutral-900 rounded-2xl border border-gray-200 dark:border-neutral-800 p-4 md:p-6">
-                  <h2 className="text-base md:text-lg text-gray-800 dark:text-white serif mb-4 md:mb-6 text-center">Today's Actual Intake</h2>
+                <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
+                  <h2 className="text-base md:text-lg text-gray-800 serif mb-4 md:mb-6 text-center">Today's Actual Intake</h2>
                   <div className="flex justify-center gap-4 md:gap-12 flex-wrap">
                     <ProgressCircle
                       percent={(actualMacros.protein / DEFAULT_TARGETS.protein) * 100}
@@ -4133,20 +4113,20 @@
                 </div>
 
                 {/* Monthly Calendar - Shows actual food logged */}
-                <div className="bg-white dark:bg-neutral-900 dark:bg-neutral-900 rounded-2xl border border-gray-200 dark:border-neutral-800 overflow-hidden">
-                  <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-neutral-800">
-                    <button onClick={prevMonth} className="p-2 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-lg text-gray-600 dark:text-neutral-300">
+                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                  <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                    <button onClick={prevMonth} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                     </button>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white serif">{monthName}</h2>
-                    <button onClick={nextMonth} className="p-2 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-lg text-gray-600 dark:text-neutral-300">
+                    <h2 className="text-lg font-semibold text-gray-900 serif">{monthName}</h2>
+                    <button onClick={nextMonth} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     </button>
                   </div>
-                  <div className="grid grid-cols-7 border-b border-gray-100 dark:border-neutral-800">
+                  <div className="grid grid-cols-7 border-b border-gray-100">
                     {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(function(day, i) {
                       var fullDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i];
-                      return <div key={i} className="py-2 md:py-3 text-center text-xs font-semibold text-gray-400 dark:text-neutral-500 uppercase tracking-wider"><span className="hidden md:inline">{fullDay}</span><span className="md:hidden">{day}</span></div>;
+                      return <div key={i} className="py-2 md:py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wider"><span className="hidden md:inline">{fullDay}</span><span className="md:hidden">{day}</span></div>;
                     })}
                   </div>
                   <div className="grid grid-cols-7">
@@ -4160,27 +4140,27 @@
                         <div
                           key={idx}
                           onClick={dayNum ? function() { setSelectedFoodLogDay(dayNum); setShowFoodLog(true); } : undefined}
-                          className={"p-1 md:p-2 min-h-[60px] md:min-h-[100px] border-r border-b border-gray-100 dark:border-neutral-800 " + (todayClass ? 'bg-amber-50 dark:bg-amber-900/30' : '') + (dayNum ? ' cursor-pointer hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors' : 'bg-gray-50 dark:bg-neutral-900')}
+                          className={"p-1 md:p-2 min-h-[60px] md:min-h-[100px] border-r border-b border-gray-100 " + (todayClass ? 'bg-amber-50' : '') + (dayNum ? ' cursor-pointer hover:bg-gray-50 transition-colors' : 'bg-gray-50')}
                         >
                           {dayNum && (
                             <div>
                               <div className="flex items-center justify-between mb-0.5 md:mb-1">
-                                <span className={"text-xs md:text-sm font-medium " + (todayClass ? 'text-amber-600 dark:text-amber-400' : 'text-gray-700 dark:text-white')}>{dayNum}</span>
-                                {hasLogged && <span className="hidden md:inline text-xs bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-1.5 py-0.5 rounded">Logged</span>}
+                                <span className={"text-xs md:text-sm font-medium " + (todayClass ? 'text-amber-600' : 'text-gray-700')}>{dayNum}</span>
+                                {hasLogged && <span className="hidden md:inline text-xs bg-green-100 text-green-600 px-1.5 py-0.5 rounded">Logged</span>}
                                 {hasLogged && <span className="md:hidden w-2 h-2 bg-green-500 rounded-full"></span>}
                               </div>
                               {hasLogged ? (
                                 <div className="space-y-0.5">
-                                  <div className="text-xs font-medium text-green-700 dark:text-green-400 truncate"><span className="hidden md:inline">{dayActualMacros.protein}g P • {dayActualMacros.calories} cal</span><span className="md:hidden">{dayActualMacros.protein}g</span></div>
-                                  <div className="hidden md:block text-xs text-gray-400 dark:text-neutral-500">{dayActualMacros.carbs}g C • {dayActualMacros.fat}g F</div>
+                                  <div className="text-xs font-medium text-green-700 truncate"><span className="hidden md:inline">{dayActualMacros.protein}g P • {dayActualMacros.calories} cal</span><span className="md:hidden">{dayActualMacros.protein}g</span></div>
+                                  <div className="hidden md:block text-xs text-gray-400">{dayActualMacros.carbs}g C • {dayActualMacros.fat}g F</div>
                                 </div>
                               ) : plannedMacros ? (
-                                <div className="space-y-0.5 opacity-70">
-                                  <div className="hidden md:block text-xs text-gray-500 dark:text-neutral-400 truncate">Planned: {plannedMacros.recipeName}</div>
-                                  <div className="text-xs text-gray-400 dark:text-neutral-500"><span className="hidden md:inline">{plannedMacros.protein}g P</span><span className="md:hidden">•</span></div>
+                                <div className="space-y-0.5 opacity-50">
+                                  <div className="hidden md:block text-xs text-gray-500 truncate">Planned: {plannedMacros.recipeName}</div>
+                                  <div className="text-xs text-gray-400"><span className="hidden md:inline">{plannedMacros.protein}g P</span><span className="md:hidden">•</span></div>
                                 </div>
                               ) : (
-                                <div className="text-xs text-gray-300 dark:text-neutral-600 hidden md:block">—</div>
+                                <div className="text-xs text-gray-300 hidden md:block">—</div>
                               )}
                             </div>
                           )}
@@ -4197,20 +4177,20 @@
             {mainSection === 'mealprep' && mealPrepView === 'plan' && (
               <div className="space-y-8">
                 {/* Meal Plan Preview Calendar */}
-                <div className="bg-white dark:bg-neutral-900 dark:bg-neutral-900 rounded-2xl border border-gray-200 dark:border-neutral-800 overflow-hidden">
-                  <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-neutral-800">
-                    <button onClick={prevMonth} className="p-2 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-lg text-gray-600 dark:text-neutral-300">
+                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                  <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                    <button onClick={prevMonth} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                     </button>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white serif">{monthName}</h2>
-                    <button onClick={nextMonth} className="p-2 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-lg text-gray-600 dark:text-neutral-300">
+                    <h2 className="text-lg font-semibold text-gray-900 serif">{monthName}</h2>
+                    <button onClick={nextMonth} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     </button>
                   </div>
-                  <div className="grid grid-cols-7 border-b border-gray-100 dark:border-neutral-800">
+                  <div className="grid grid-cols-7 border-b border-gray-100">
                     {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(function(day, i) {
                       var fullDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i];
-                      return <div key={i} className="py-2 md:py-3 text-center text-xs font-semibold text-gray-400 dark:text-neutral-500 uppercase tracking-wider"><span className="hidden md:inline">{fullDay}</span><span className="md:hidden">{day}</span></div>;
+                      return <div key={i} className="py-2 md:py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wider"><span className="hidden md:inline">{fullDay}</span><span className="md:hidden">{day}</span></div>;
                     })}
                   </div>
                   <div className="grid grid-cols-7">
@@ -4223,22 +4203,22 @@
                         <div
                           key={idx}
                           onClick={dayNum ? function() { handleDayClick(dayNum); } : undefined}
-                          className={"p-1 md:p-2 min-h-[60px] md:min-h-[100px] border-r border-b border-gray-100 dark:border-neutral-800 " + (todayClass ? 'bg-amber-50 dark:bg-amber-900/30' : '') + (dayNum ? ' cursor-pointer hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors' : 'bg-gray-50 dark:bg-neutral-900')}
+                          className={"p-1 md:p-2 min-h-[60px] md:min-h-[100px] border-r border-b border-gray-100 " + (todayClass ? 'bg-amber-50' : '') + (dayNum ? ' cursor-pointer hover:bg-gray-50 transition-colors' : 'bg-gray-50')}
                         >
                           {dayNum && (
                             <div>
                               <div className="flex items-center justify-between mb-0.5 md:mb-1">
-                                <span className={"text-xs md:text-sm font-medium " + (todayClass ? 'text-amber-600 dark:text-amber-400' : 'text-gray-700 dark:text-white')}>{dayNum}</span>
-                                {cookDay && <span className="hidden md:inline text-xs bg-gray-200 dark:bg-neutral-700 text-gray-600 dark:text-neutral-300 px-1.5 py-0.5 rounded">Cook</span>}
+                                <span className={"text-xs md:text-sm font-medium " + (todayClass ? 'text-amber-600' : 'text-gray-700')}>{dayNum}</span>
+                                {cookDay && <span className="hidden md:inline text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded">Cook</span>}
                                 {cookDay && <span className="md:hidden w-2 h-2 bg-orange-400 rounded-full"></span>}
                               </div>
                               {macros ? (
                                 <div className="space-y-0.5">
-                                  <div className="hidden md:block text-xs font-medium text-gray-800 dark:text-white truncate">{macros.recipeName}</div>
-                                  <div className="text-xs text-gray-500 dark:text-neutral-400 truncate"><span className="hidden md:inline">{macros.protein}g P • {macros.calories} cal</span><span className="md:hidden">{macros.protein}g</span></div>
+                                  <div className="hidden md:block text-xs font-medium text-gray-800 truncate">{macros.recipeName}</div>
+                                  <div className="text-xs text-gray-500 truncate"><span className="hidden md:inline">{macros.protein}g P • {macros.calories} cal</span><span className="md:hidden">{macros.protein}g</span></div>
                                 </div>
                               ) : (
-                                <div className="text-xs text-gray-300 dark:text-neutral-600 hidden md:block">—</div>
+                                <div className="text-xs text-gray-300 hidden md:block">—</div>
                               )}
                             </div>
                           )}
@@ -4251,10 +4231,10 @@
                 {/* 4 Recipe Selection Boxes (2-Week Rotation) */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-base md:text-lg text-gray-800 dark:text-white serif">Meal Plan (2-Week Rotation)</h2>
+                    <h2 className="text-base md:text-lg text-gray-800 serif">Meal Plan (2-Week Rotation)</h2>
                     <button
                       onClick={randomizeMealPlan}
-                      className="p-2 text-red-800 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all"
+                      className="p-2 text-red-800 hover:bg-red-50 rounded-lg transition-all"
                       title="Randomize meal plan"
                     >
                       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
@@ -4310,11 +4290,11 @@
               <div className="space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <h2 className="text-xl text-gray-800 dark:text-white serif">Shopping List</h2>
+                  <h2 className="text-xl text-gray-800 serif">Shopping List</h2>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={function() { setShowRemindersImport(true); }}
-                      className="px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-neutral-200 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-neutral-700 flex items-center gap-2"
+                      className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 flex items-center gap-2"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                       Paste List
@@ -4322,7 +4302,7 @@
                     {smartGroceryList && smartGroceryList.stores && smartGroceryList.stores.some(function(s) { return s.categories && s.categories.length > 0; }) && (
                       <button
                         onClick={function() { setSmartGroceryList(null); }}
-                        className="px-3 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-200 flex items-center gap-2"
+                        className="px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 flex items-center gap-2"
                         title="Clear manually added items"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
@@ -4333,15 +4313,15 @@
                 </div>
 
                 {/* AI-Powered Add Item Input */}
-                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-neutral-900 dark:to-neutral-900 rounded-2xl border border-purple-200 dark:border-neutral-700 p-4">
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border border-purple-200 p-4">
                   <form onSubmit={function(e) { e.preventDefault(); addItemWithAI(newPantryItem); }}>
                     <div className="flex gap-3 items-center">
                       <div className="flex-1 relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2">
                           {groceryAiLoading ? (
-                            <svg className="w-5 h-5 text-purple-500 dark:text-red-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                            <svg className="w-5 h-5 text-purple-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                           ) : (
-                            <svg className="w-5 h-5 text-purple-500 dark:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                           )}
                         </div>
                         <input
@@ -4350,13 +4330,13 @@
                           value={newPantryItem}
                           onChange={function(e) { setNewPantryItem(e.target.value); }}
                           disabled={groceryAiLoading}
-                          className="w-full pl-10 pr-4 py-3 text-base border border-purple-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-red-500 focus:border-transparent disabled:opacity-50 dark:placeholder-neutral-500"
+                          className="w-full pl-10 pr-4 py-3 text-base border border-purple-200 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50"
                         />
                       </div>
                       <button
                         type="submit"
                         disabled={!newPantryItem.trim() || groceryAiLoading}
-                        className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-red-600 dark:to-red-700 text-white rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 dark:hover:from-red-700 dark:hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                         Add
@@ -4367,15 +4347,15 @@
 
                 {/* Import from Reminders Modal */}
                 {showRemindersImport && (
-                  <div className="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={function() { setShowRemindersImport(false); }}>
-                    <div className="bg-white dark:bg-neutral-900 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
+                  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={function() { setShowRemindersImport(false); }}>
+                    <div className="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl" onClick={function(e) { e.stopPropagation(); }}>
                       <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-500 to-indigo-600">
-                        <div className="flex items-center justify-between text-white dark:text-white">
+                        <div className="flex items-center justify-between text-white">
                           <div>
                             <h2 className="text-lg font-bold">Import from Reminders</h2>
                             <p className="text-blue-100 text-sm">Paste your grocery list</p>
                           </div>
-                          <button onClick={function() { setShowRemindersImport(false); }} className="text-white/80 hover:text-white dark:text-white">
+                          <button onClick={function() { setShowRemindersImport(false); }} className="text-white/80 hover:text-white">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                           </button>
                         </div>
@@ -4385,7 +4365,7 @@
                           value={remindersImportText}
                           onChange={function(e) { setRemindersImportText(e.target.value); }}
                           placeholder="Paste your list here (one item per line)..."
-                          className="w-full h-40 px-3 py-2 text-sm border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full h-40 px-3 py-2 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <div className="flex gap-2">
                           <button
@@ -4501,17 +4481,17 @@
                     });
 
                     return (
-                      <div className="bg-white dark:bg-neutral-900 dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-neutral-800 p-4">
-                        <div className="flex items-center gap-3 mb-3 pb-2 border-b border-gray-100 dark:border-neutral-800">
-                          <div className={"w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm " + (isWalmart ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' : 'bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-400')}>
+                      <div className="bg-white rounded-xl border border-gray-200 p-4">
+                        <div className="flex items-center gap-3 mb-3 pb-2 border-b border-gray-100">
+                          <div className={"w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm " + (isWalmart ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600')}>
                             {isWalmart ? 'W' : 'A'}
                           </div>
-                          <h4 className="font-medium text-gray-900 dark:text-white flex-1">{storeName}</h4>
-                          <span className="text-xs text-gray-400 dark:text-neutral-500">{total} items</span>
+                          <h4 className="font-medium text-gray-900 flex-1">{storeName}</h4>
+                          <span className="text-xs text-gray-400">{total} items</span>
                         </div>
 
                         {total === 0 ? (
-                          <p className="text-sm text-gray-400 dark:text-neutral-500 text-center py-4">No items yet</p>
+                          <p className="text-sm text-gray-400 text-center py-4">No items yet</p>
                         ) : (
                           <div className="space-y-3">
                             {catNames.map(function(catName) {
@@ -4519,18 +4499,18 @@
                               if (!items || items.length === 0) return null;
                               return (
                                 <div key={catName}>
-                                  <h5 className="text-xs font-medium uppercase mb-1 text-gray-400 dark:text-neutral-500">{catName}</h5>
+                                  <h5 className="text-xs font-medium uppercase mb-1 text-gray-400">{catName}</h5>
                                   <div className="space-y-1">
                                     {items.map(function(item) {
                                       return (
-                                        <div key={item.key} className={"flex items-center gap-2 py-1 rounded " + (checkedItems[item.key] ? 'bg-green-50 dark:bg-red-900/20' : 'hover:bg-gray-50 dark:hover:bg-neutral-800')}>
+                                        <div key={item.key} className={"flex items-center gap-2 py-1 rounded " + (checkedItems[item.key] ? 'bg-green-50' : 'hover:bg-gray-50')}>
                                           <button onClick={function() { setCheckedItems(function(prev) { var n = Object.assign({}, prev); n[item.key] = !n[item.key]; return n; }); }}
-                                            className={"flex items-center gap-2 text-left text-sm flex-1 " + (checkedItems[item.key] ? 'text-gray-400 dark:text-neutral-600 line-through' : 'text-gray-700 dark:text-neutral-200')}>
-                                            <div className={"w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center " + (checkedItems[item.key] ? 'border-green-500 dark:border-red-500 bg-green-500 dark:bg-red-500' : 'border-gray-300 dark:border-neutral-600')}>
-                                              {checkedItems[item.key] && <svg className="w-3 h-3 text-white dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                                            className={"flex items-center gap-2 text-left text-sm flex-1 " + (checkedItems[item.key] ? 'text-gray-400 line-through' : 'text-gray-700')}>
+                                            <div className={"w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center " + (checkedItems[item.key] ? 'border-green-500 bg-green-500' : 'border-gray-300')}>
+                                              {checkedItems[item.key] && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                                             </div>
                                             <span className="flex-1">{item.item}</span>
-                                            {item.amount && <span className="text-xs text-gray-400 dark:text-neutral-500">{item.amount}</span>}
+                                            {item.amount && <span className="text-xs text-gray-400">{item.amount}</span>}
                                           </button>
                                           <button
                                             onClick={function() {
@@ -4554,7 +4534,7 @@
                                                 });
                                               }
                                             }}
-                                            className="p-1 text-gray-400 dark:text-neutral-500 hover:text-red-500 rounded flex-shrink-0"
+                                            className="p-1 text-gray-400 hover:text-red-500 rounded flex-shrink-0"
                                           >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                           </button>
@@ -4589,11 +4569,11 @@
                   <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-green-600 dark:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                       </div>
                       <div>
                         <h2 className="text-lg font-medium text-green-800">Select a Recipe</h2>
-                        <p className="text-sm text-green-600 dark:text-red-500">
+                        <p className="text-sm text-green-600">
                           {selectedSlot.replace('week', 'Week ').replace('_sun', ' • Sunday Cook').replace('_wed', ' • Wednesday Cook')}
                         </p>
                       </div>
@@ -4603,7 +4583,7 @@
                     </button>
                   </div>
                 ) : (
-                  <h2 className="text-xl text-gray-800 dark:text-white serif mb-4">Browse</h2>
+                  <h2 className="text-xl text-gray-800 serif mb-4">Browse</h2>
                 )}
 
                 {/* Search Bar - works for all categories with AI add */}
@@ -4627,7 +4607,7 @@
                         }
                       }}
                       rows={recipeSearch.includes('\n') ? 4 : 1}
-                      className={"w-full pl-10 py-2.5 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none " + (recipeSearch.trim() ? "pr-28" : "pr-4")}
+                      className={"w-full pl-10 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none " + (recipeSearch.trim() ? "pr-28" : "pr-4")}
                     />
                     {/* Add with AI button - shows for all categories */}
                     {recipeSearch.trim() && (function() {
@@ -4677,8 +4657,8 @@
                         key={cat.id}
                         onClick={function() { setCategoryFilter(cat.id); }}
                         className={categoryFilter === cat.id
-                          ? "px-4 py-2 rounded-full text-sm font-medium bg-gray-900 dark:bg-red-600 text-white"
-                          : "px-4 py-2 rounded-full text-sm font-medium bg-gray-100 dark:bg-neutral-800 text-gray-600 dark:text-neutral-300 hover:bg-gray-200 dark:hover:bg-neutral-700"
+                          ? "px-4 py-2 rounded-full text-sm font-medium bg-gray-900 text-white"
+                          : "px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200"
                         }
                       >
                         {cat.label}
@@ -4691,11 +4671,11 @@
                 {categoryFilter === 'breakfast' ? (
                   <div className="space-y-6">
                     <div className="flex items-center justify-between flex-wrap gap-2">
-                      <p className="text-sm text-gray-500 dark:text-neutral-400">Click to view details • Search to add new</p>
+                      <p className="text-sm text-gray-500">Click to view details • Search to add new</p>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={function() { setBreakfastEditMode(!breakfastEditMode); }}
-                          className={breakfastEditMode ? "px-3 py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-200 flex items-center gap-1" : "px-3 py-1.5 bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-neutral-200 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-neutral-700 flex items-center gap-1"}
+                          className={breakfastEditMode ? "px-3 py-1.5 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 flex items-center gap-1" : "px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 flex items-center gap-1"}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={breakfastEditMode ? "M6 18L18 6M6 6l12 12" : "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"} /></svg>
                           {breakfastEditMode ? 'Done' : 'Delete'}
@@ -4728,7 +4708,7 @@
                               if (breakfastEditMode) return;
                               setViewingBreakfast(item);
                             }}
-                            className={"p-4 rounded-xl border-2 cursor-pointer transition-all relative " + (breakfastEditMode ? "border-red-200 bg-red-50" : isSelected ? "border-green-400 bg-green-50 dark:bg-red-900/20" : "border-gray-200 bg-white dark:bg-neutral-900 hover:border-gray-300 dark:border-neutral-700")}
+                            className={"p-4 rounded-xl border-2 cursor-pointer transition-all relative " + (breakfastEditMode ? "border-red-200 bg-red-50" : isSelected ? "border-green-400 bg-green-50" : "border-gray-200 bg-white hover:border-gray-300")}
                           >
                             {breakfastEditMode && (
                               <button
@@ -4745,7 +4725,7 @@
                             <div className="flex items-start justify-between mb-2">
                               <div className="flex items-center gap-2">
                                 <span className="text-2xl">{item.emoji || '🍳'}</span>
-                                <h3 className="font-medium text-gray-900 dark:text-white dark:text-white">{item.name}</h3>
+                                <h3 className="font-medium text-gray-900">{item.name}</h3>
                               </div>
                               {!breakfastEditMode && isSelected && (
                                 <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
@@ -4820,7 +4800,7 @@
                       var matchesSearch = !recipeSearch || recipe.name.toLowerCase().includes(recipeSearch.toLowerCase());
                       return matchesCategory && matchesSearch;
                     }).length === 0 && (
-                      <div className="text-center py-12 text-gray-500 dark:text-neutral-400">
+                      <div className="text-center py-12 text-gray-500">
                         No recipes in this category. Try importing one!
                       </div>
                     )}
